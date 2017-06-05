@@ -5,7 +5,6 @@ A tool that converts heater states (e.g. from a logfile) to a trajectory.
 There are no dependencies right now.
 
 ## Getting Started
-Although, the intention of this 
 To build the tool, just run
 
   cd IMtrajectoryModel

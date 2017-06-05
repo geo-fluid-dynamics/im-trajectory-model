@@ -40,7 +40,7 @@ void useDataFromInputFile(bool flag, double* inputFileValue, double* modelValue,
 int main(int argc, const char * argv[]) {
     
     string logfileName="";
-    string outputName="./";
+    string outputName="trajectory.log";
     string inputFileName="";
     
     // Check command line arguments
@@ -180,7 +180,7 @@ int main(int argc, const char * argv[]) {
             
         }
     
-        trajectory.writeToDisk("trajectory.log");
+        trajectory.writeToDisk(outputName);
     }
     
     return 0;

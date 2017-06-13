@@ -115,12 +115,17 @@ int main(int argc, const char * argv[]) {
         myIMmodel.straightMeltingModel=0;
         myIMmodel.curvilinearMeltingModel=0;
 
+        
+        double p_0[3]={0,0,0};
+        double t_0[3]={0,0,-1};
+        double n_0[3]={1,0,0};
+        
         if (!inputFileName.empty()) {
             
             // read the input file by creating an IMinputFileParser object
             IMinputFileParser inputFileObj(inputFileName);
             
-            // now print a waring if variables has not been defined in the input file
+            // now print a warning if variables has not been defined in the input file
             useDataFromInputFile(inputFileObj.flag_rho_S, &inputFileObj.rho_S, &myIMmodel.rho_S,inputFileName,"rho_S");
             useDataFromInputFile(inputFileObj.flag_rho_L, &inputFileObj.rho_L, &myIMmodel.rho_L,inputFileName,"rho_L");
             useDataFromInputFile(inputFileObj.flag_h_m, &inputFileObj.h_m, &myIMmodel.h_m,inputFileName,"h_m");
@@ -144,11 +149,15 @@ int main(int argc, const char * argv[]) {
             }else{
                 cout << "WARNING: c2_tau was not found in " << inputFileName << ". Using the default value " << c2_tau << " instead." << endl;
             }
+            
+            if (inputFileObj.flag_t_0) {
+                t_0[0]=inputFileObj.t_0[0];
+                t_0[1]=inputFileObj.t_0[1];
+                t_0[2]=inputFileObj.t_0[2];
+            }else{
+                cout << "WARNING: t_0 was not found in " << inputFileName << ". Using the default values " << t_0 << " instead." << endl;
+            }
         }
-        
-        double p_0[3]={0,0,0};
-        double t_0[3]={0,0,-1};
-        double n_0[3]={1,0,0};
         
         double tau=0;
         

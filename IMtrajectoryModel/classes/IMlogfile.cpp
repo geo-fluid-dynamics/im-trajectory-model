@@ -8,18 +8,6 @@
 
 #include "IMlogfile.hpp"
 
-vector<string> split(string str, char delimiter) {
-    vector<string> internal;
-    stringstream ss(str); // Turn the string into a stream.
-    string tok;
-    
-    while(getline(ss, tok, delimiter)) {
-        internal.push_back(tok);
-    }
-    
-    return internal;
-}
-
 unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes,int seconds){
     unsigned int secondsOut=hours*3600+minutes*60+seconds;
     secondsOut=secondsOut+365*(year-2008)*3600*24;

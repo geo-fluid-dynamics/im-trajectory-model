@@ -96,6 +96,8 @@ void LUevaluate(double l[9][9], double u[9][9], double b[9], double x[9]){
 
 IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,double* r_cDirection_0,unsigned int length){
     
+    this->flag_r_c_direction_has_changed=0;
+    
     this->subSteps=0;
     
     this->length=length;
@@ -107,6 +109,7 @@ IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,double* r_cDire
     this->p = new double*[this->length];
     this->t = new double*[this->length];
     this->n = new double*[this->length];
+    this->yplus = new double*[this->length];
     
     for (unsigned int i=0; i<3; i++) {
         this->r_cDirection_0[i]=r_cDirection_0[i];
@@ -120,11 +123,13 @@ IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,double* r_cDire
         this->p[i] = new double[3];
         this->t[i] = new double[3];
         this->n[i] = new double[3];
+        this->yplus[i] = new double[3];
     }
     for (unsigned int i=0; i<3; i++) {
         this->p[0][i]=this->p_0[i];
         this->t[0][i]=this->t_0[i];
         this->n[0][i]=this->n_0[i];
+        this->yplus[0][i]=this->n_0[i]; // set yplus at start equal to n
     }
     this->pos=1;
 }
@@ -167,10 +172,12 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             b[0]=tOld[1]*nOld[2]-tOld[2]*nOld[1];
             b[1]=tOld[2]*nOld[0]-tOld[0]*nOld[2];
             b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
+            this->flag_r_c_direction_has_changed=1;
         }else{
             b[0]=tOld[2]*nOld[1]-tOld[1]*nOld[2];
             b[1]=tOld[0]*nOld[2]-tOld[2]*nOld[0];
             b[2]=tOld[1]*nOld[0]-tOld[0]*nOld[1];
+            this->flag_r_c_direction_has_changed=0;
         }
 
             
@@ -257,6 +264,11 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     }
     
     for (unsigned int i=0; i<3; i++) {
+        if (this->flag_r_c_direction_has_changed) {
+            this->yplus[newPos][i]=-b[i];
+        }else{
+            this->yplus[newPos][i]=nNew[i];
+        }
         this->p[newPos][i]=pNew[i];
         this->t[newPos][i]=tNew[i];
         this->n[newPos][i]=nNew[i];
@@ -270,7 +282,7 @@ void IMtrajectory::writeToDisk(string filename){
     if (myfile.is_open())
     {
         this->times[this->length-1]=this->times[this->length-2]; // because there is no dt for the last timestep
-        myfile << "time px py pz tx ty tz nx ny nz" << endl;
+        myfile << "time px py pz tx ty tz nx ny nz y+_x y+_y y+_z" << endl;
         for (unsigned int i=0; i<this->length; i++) {
             myfile << this->times[i] << " "
                    << this->p[i][0] << " "
@@ -281,7 +293,10 @@ void IMtrajectory::writeToDisk(string filename){
                    << this->t[i][2] << " "
                    << this->n[i][0] << " "
                    << this->n[i][1] << " "
-                   << this->n[i][2] << endl;
+                   << this->n[i][2] << " "
+                   << this->yplus[i][0] << " "
+                   << this->yplus[i][1] << " "
+                   << this->yplus[i][2] << endl;
         }
         myfile.close();
     }

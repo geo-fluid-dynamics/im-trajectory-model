@@ -26,12 +26,14 @@ public:
     double** p;             // positions for all times
     double** t;             // tangents for all times
     double** n;             // normals for all times
+    double** yplus;         // head orientation for all times (see IMinterpreter.cpp for details)
     double* times;          // time points (starts at 0)
     unsigned int length;    // the length positions
     unsigned int subSteps;  // the frenet-serret equations are solved subSteps+1 times for each time
     int method;             // 0: forward; 1: backward
     double r_cDirection_0[3];// initial direction of curve radius
     double r_cDirection[3];  // last r_cDirection
+    bool flag_r_c_direction_has_changed;
     
     IMtrajectory(double* p_0, double* t_0, double* n_0,double* r_cDirection_0, unsigned int length);
     void add(double,double,double,double,double*);

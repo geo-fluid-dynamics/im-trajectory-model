@@ -13,6 +13,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include "../functions/utilities.hpp"
 using namespace std;
 
 
@@ -46,6 +48,10 @@ public:
     bool flag_c1_tau;
     double c2_tau;
     bool flag_c2_tau;
+    double t_0[3];
+    bool flag_t_0;
+    double y_0[3];
+    bool flag_y_0;
     
     string filename;
     unsigned int numberOfLines;

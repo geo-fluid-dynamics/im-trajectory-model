@@ -71,7 +71,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/kaischueller/Desktop/IceMoleTrajectoryModel/IMtrajectoryModel/icemole_state.log"
+            argument = "/Users/kaischueller/Nextcloud/FieldTests/04062013/icemole_state.log"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

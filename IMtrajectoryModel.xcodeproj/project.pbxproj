@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DA06CB831EE4699F00FE6241 /* IMinputFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA06CB811EE4699F00FE6241 /* IMinputFileParser.cpp */; };
+		DA6985D61EEFEC3600180EC6 /* utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA6985D41EEFEC3600180EC6 /* utilities.cpp */; };
 		DA9A31D21EDC6ECD00B67414 /* runTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA9A31D01EDC6ECD00B67414 /* runTests.cpp */; };
 		DAF2E5781ED6CA000094BB72 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF2E5771ED6CA000094BB72 /* main.cpp */; };
 		DAF2E5801ED6CAE20094BB72 /* IMlogfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAF2E57E1ED6CAE20094BB72 /* IMlogfile.cpp */; };
@@ -31,6 +32,8 @@
 /* Begin PBXFileReference section */
 		DA06CB811EE4699F00FE6241 /* IMinputFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMinputFileParser.cpp; path = IMtrajectoryModel/classes/IMinputFileParser.cpp; sourceTree = SOURCE_ROOT; };
 		DA06CB821EE4699F00FE6241 /* IMinputFileParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMinputFileParser.hpp; path = IMtrajectoryModel/classes/IMinputFileParser.hpp; sourceTree = SOURCE_ROOT; };
+		DA6985D41EEFEC3600180EC6 /* utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utilities.cpp; path = functions/utilities.cpp; sourceTree = "<group>"; };
+		DA6985D51EEFEC3600180EC6 /* utilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utilities.hpp; path = functions/utilities.hpp; sourceTree = "<group>"; };
 		DA9A31D01EDC6ECD00B67414 /* runTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runTests.cpp; path = IMtrajectoryModel/functions/runTests.cpp; sourceTree = SOURCE_ROOT; };
 		DA9A31D11EDC6ECD00B67414 /* runTests.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = runTests.hpp; path = IMtrajectoryModel/functions/runTests.hpp; sourceTree = SOURCE_ROOT; };
 		DAF2E5741ED6CA000094BB72 /* IMtrajectoryModel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IMtrajectoryModel; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +78,8 @@
 		DAF2E5761ED6CA000094BB72 /* IMtrajectoryModel */ = {
 			isa = PBXGroup;
 			children = (
+				DA6985D41EEFEC3600180EC6 /* utilities.cpp */,
+				DA6985D51EEFEC3600180EC6 /* utilities.hpp */,
 				DAF2E5771ED6CA000094BB72 /* main.cpp */,
 				DA06CB811EE4699F00FE6241 /* IMinputFileParser.cpp */,
 				DA06CB821EE4699F00FE6241 /* IMinputFileParser.hpp */,
@@ -151,6 +156,7 @@
 			files = (
 				DA06CB831EE4699F00FE6241 /* IMinputFileParser.cpp in Sources */,
 				DAF2E58C1ED87B290094BB72 /* IMtrajectory.cpp in Sources */,
+				DA6985D61EEFEC3600180EC6 /* utilities.cpp in Sources */,
 				DA9A31D21EDC6ECD00B67414 /* runTests.cpp in Sources */,
 				DAF2E5801ED6CAE20094BB72 /* IMlogfile.cpp in Sources */,
 				DAF2E5781ED6CA000094BB72 /* main.cpp in Sources */,

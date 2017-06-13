@@ -14,6 +14,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "../functions/utilities.hpp"
 
 using namespace std;
 

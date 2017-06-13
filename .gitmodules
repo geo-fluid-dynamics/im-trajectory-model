@@ -1,6 +1,3 @@
-[submodule "postprocessing/VisIM"]
-	path = postprocessing/VisIM
-	url = git@github.com:geo-fluid-dynamics/VisIM.git
 [submodule "submodules/VisIM"]
 	path = submodules/VisIM
 	url = git@github.com:geo-fluid-dynamics/VisIM.git

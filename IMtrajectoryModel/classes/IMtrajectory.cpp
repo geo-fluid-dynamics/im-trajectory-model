@@ -281,7 +281,7 @@ void IMtrajectory::writeToDisk(string filename){
                    << this->t[i][2] << " "
                    << this->n[i][0] << " "
                    << this->n[i][1] << " "
-                   << this->p[i][2] << endl;
+                   << this->n[i][2] << endl;
         }
         myfile.close();
     }

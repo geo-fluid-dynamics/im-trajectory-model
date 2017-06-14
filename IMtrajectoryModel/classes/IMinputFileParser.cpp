@@ -139,12 +139,12 @@ IMinputFileParser::IMinputFileParser(string filename){
                         this->t_0[1]=stod(sep[1]);
                         this->t_0[2]=stod(sep[2]);
                         this->flag_t_0=1;
-                    }else if (!keyword.compare("y_0")){
+                    }else if (!keyword.compare("n_0")){
                         vector<string> sep = split(valueStr, ',');
-                        this->y_0[0]=stod(sep[0]);
-                        this->y_0[1]=stod(sep[1]);
-                        this->y_0[2]=stod(sep[2]);
-                        this->flag_y_0=1;
+                        this->n_0[0]=stod(sep[0]);
+                        this->n_0[1]=stod(sep[1]);
+                        this->n_0[2]=stod(sep[2]);
+                        this->flag_n_0=1;
                     }else{
                         std::cerr << keyword << " is not a valid keyword." << std::endl;
                         return;

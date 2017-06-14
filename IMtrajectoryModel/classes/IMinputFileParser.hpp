@@ -48,10 +48,10 @@ public:
     bool flag_c1_tau;
     double c2_tau;
     bool flag_c2_tau;
-    double t_0[3];
+    double t_0[3];              // initial tangent
     bool flag_t_0;
-    double y_0[3];
-    bool flag_y_0;
+    double n_0[3];              // initial normal
+    bool flag_n_0;
     
     string filename;
     unsigned int numberOfLines;

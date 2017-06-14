@@ -137,26 +137,31 @@ int main(int argc, const char * argv[]) {
             useDataFromInputFile(inputFileObj.flag_k_S, &inputFileObj.k_S, &myIMmodel.k_S,inputFileName,"k_S");
             useDataFromInputFile(inputFileObj.flag_L, &inputFileObj.L, &myIMmodel.L,inputFileName,"L");
             useDataFromInputFile(inputFileObj.flag_H, &inputFileObj.H, &myIMmodel.H,inputFileName,"H");
-            
-            if (inputFileObj.flag_c1_tau) {
-                c1_tau=inputFileObj.c1_tau;
-            }else{
-                cout << "WARNING: c1_tau was not found in " << inputFileName << ". Using the default value " << c1_tau << " instead." << endl;
-            }
-            
-            if (inputFileObj.flag_c2_tau) {
-                c2_tau=inputFileObj.c2_tau;
-            }else{
-                cout << "WARNING: c2_tau was not found in " << inputFileName << ". Using the default value " << c2_tau << " instead." << endl;
-            }
+            useDataFromInputFile(inputFileObj.flag_c1_tau, &inputFileObj.c1_tau, &c1_tau,inputFileName,"c1_tau");
+            useDataFromInputFile(inputFileObj.flag_c2_tau, &inputFileObj.c2_tau, &c2_tau,inputFileName,"c2_tau");
             
             if (inputFileObj.flag_t_0) {
                 t_0[0]=inputFileObj.t_0[0];
                 t_0[1]=inputFileObj.t_0[1];
                 t_0[2]=inputFileObj.t_0[2];
             }else{
-                cout << "WARNING: t_0 was not found in " << inputFileName << ". Using the default values " << t_0 << " instead." << endl;
+                cout << "WARNING: t_0 was not found in " << inputFileName << ". Using the default values " << t_0[0] << "," << t_0[1] << "," << t_0[2] << " instead." << endl;
             }
+            if (inputFileObj.flag_n_0) {
+                n_0[0]=inputFileObj.n_0[0];
+                n_0[1]=inputFileObj.n_0[1];
+                n_0[2]=inputFileObj.n_0[2];
+            }else{
+                cout << "WARNING: n_0 was not found in " << inputFileName << ". Using the default values " << n_0[0] << "," << n_0[1] << "," << n_0[2] << " instead." << endl;
+            }
+        }
+        
+        // make sure that we are using unit vectors
+        double norm_t_0=sqrt(t_0[0]*t_0[0]+t_0[1]*t_0[1]+t_0[2]*t_0[2]);
+        double norm_n_0=sqrt(n_0[0]*n_0[0]+n_0[1]*n_0[1]+n_0[2]*n_0[2]);
+        for (unsigned int i=0; i<3; i++) {
+            t_0[i]=t_0[i]/norm_t_0;
+            n_0[i]=n_0[i]/norm_n_0;
         }
         
         double tau=0;

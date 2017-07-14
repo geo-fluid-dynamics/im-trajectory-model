@@ -24,7 +24,7 @@ void testerInfo(int condition,string moduleName,int testNumber){
 
 int testLogfileReading(string filename){
     
-    IMlogfile logfile(filename);
+    IMlogfile logfile(filename,false);
     
     return logfile.isValidLogfile;
 }

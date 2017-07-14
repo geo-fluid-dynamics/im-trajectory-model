@@ -55,7 +55,7 @@ unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes
     return secondsOut;
 }
 
-IMlogfile::IMlogfile(string filename){
+IMlogfile::IMlogfile(string filename, bool simpleLogfile){
     unsigned int i;
     this->filename=filename;
     string line;
@@ -105,20 +105,33 @@ IMlogfile::IMlogfile(string filename){
         for (i=0; i<this->numberOfLines; i++) {
             if (this->dataLines[i]) {
                 vector<string> sep = split(this->content[i], ' ');
-                
-                vector<string> dateValues=split(sep[0], '.');
-                vector<string> timeValues=split(sep[1], ':');
 
-                this->timeInSeconds[k]=dateTimeToSeconds(atoi( dateValues[2].c_str() ),atoi( dateValues[1].c_str() ),atoi( dateValues[0].c_str() ),atoi( timeValues[0].c_str() ),atoi( timeValues[1].c_str() ),atoi( timeValues[2].c_str() ));
-                
-                for (unsigned n = 0; n<24; n++) {
-
-                    if(sep[13][n]=='0'){
-                        heaterStates[k][n]=false;
-                    }else{
-                        heaterStates[k][n]=true;
+                if(simpleLogfile){
+                    this->timeInSeconds[k]=atoi( sep[0].c_str() );
+                    for (unsigned n = 0; n<24; n++) {
+                        
+                        if(sep[n+1][0]=='0'){
+                            heaterStates[k][n]=false;
+                        }else{
+                            heaterStates[k][n]=true;
+                        }
+                        //cout << heaterStates[k][n];
                     }
-                    //cout << heaterStates[k][n];
+                }else{
+                    vector<string> dateValues=split(sep[0], '.');
+                    vector<string> timeValues=split(sep[1], ':');
+                    
+                    this->timeInSeconds[k]=dateTimeToSeconds(atoi( dateValues[2].c_str() ),atoi( dateValues[1].c_str() ),atoi( dateValues[0].c_str() ),atoi( timeValues[0].c_str() ),atoi( timeValues[1].c_str() ),atoi( timeValues[2].c_str() ));
+                
+                    for (unsigned n = 0; n<24; n++) {
+
+                        if(sep[13][n]=='0'){
+                            heaterStates[k][n]=false;
+                        }else{
+                            heaterStates[k][n]=true;
+                        }
+                        //cout << heaterStates[k][n];
+                    }
                 }
                 //cout << "\n";
                 k++;

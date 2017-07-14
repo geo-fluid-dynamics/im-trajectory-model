@@ -35,7 +35,7 @@ public:
     bool **heaterStates;            // 2d array of the heater states (numberOfDataLines x 24)
     unsigned int *timeInSeconds;    // time in seconds for each data line (beginning from 0 s)
     bool isValidLogfile;            // to check if the logfile is valid
-    IMlogfile(string);
+    IMlogfile(string,bool);
     ~IMlogfile();
 };
 

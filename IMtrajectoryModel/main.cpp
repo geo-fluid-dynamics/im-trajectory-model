@@ -42,6 +42,7 @@ int main(int argc, const char * argv[]) {
     string logfileName="";
     string outputName="trajectory.log";
     string inputFileName="";
+    bool simpleLogfile=false;
     
     // Check command line arguments
     if (argc > 0) {
@@ -57,11 +58,20 @@ int main(int argc, const char * argv[]) {
                 
                 if (i + 1 < argc) { // Make sure we aren't at the end of argv!
                     logfileName = argv[++i]; // Increment 'i' so we don't get the argument as the next argv[i].
+                    simpleLogfile=false;
                 } else { // there was no argument to the destination option.
                     std::cerr << "--logfile option requires one argument." << std::endl;
                     return 1;
                 }
-            
+            } else if ((arg == "-sl") || (arg == "--simplelogfile")) {
+                
+                if (i + 1 < argc) { // Make sure we aren't at the end of argv!
+                    logfileName = argv[++i]; // Increment 'i' so we don't get the argument as the next argv[i].
+                    simpleLogfile=true;
+                } else { // there was no argument to the destination option.
+                    std::cerr << "--simplelogfile option requires one argument." << std::endl;
+                    return 1;
+                }
             }else if((arg == "-o") || (arg == "--output")){
                 
                 if (i + 1 < argc) { // Make sure we aren't at the end of argv!
@@ -100,7 +110,7 @@ int main(int argc, const char * argv[]) {
     
     // We can only execute the program if an appropriate logfile is provided
     if(!logfileName.empty()){
-        IMlogfile A(logfileName);
+        IMlogfile A(logfileName,simpleLogfile);
         
         float P_H=0.;
         float P_W=0.;

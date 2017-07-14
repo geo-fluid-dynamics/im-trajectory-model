@@ -63,7 +63,7 @@ void IMmodel::solve(){
     
     switch (this->curvilinearMeltingModel) {
         case 0:
-            if (this->P_W!=0) { // if straight melting
+            if (this->P_W!=0 && this->P_H!=0) { // if not straight melting; make also sure that there will be no division by zero when P_H is equal to zero
                 this->r_c = this->P_H / this->P_W * this->L*this->L/(2*this->H);
                 
             }else{

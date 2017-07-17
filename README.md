@@ -6,12 +6,17 @@ The heater state changes can be provided by two possible input files, namely a l
 Author: K. Schüller schueller@aices.rwth-aachen.de
 
 ## Dependencies
-There are no dependencies right now.
+* [CMake](https://cmake.org)
 
 ## Getting Started
-To build the tool, just run
+To build the tool, create a build fold in the root directoy
 ```
-cd IMtrajectoryModel
+make build
+cd build
+```
+Then execute
+```
+cmake ..
 make
 ```
 To make sure that everything works as expected, you can run the tests by

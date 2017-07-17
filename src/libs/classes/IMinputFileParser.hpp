@@ -15,12 +15,17 @@
 #include <sstream>
 #include <vector>
 #include "../functions/utilities.hpp"
+#include "../classes/IMmodel.hpp"
+#include <cmath>
 using namespace std;
 
 
 class IMinputFileParser {
 private:
     void setAllflagsToFalse(void);
+    template <typename T>
+    void useDataFromInputFile(bool, T*, T* ,string , string );
+    
 public:
     double rho_S;                // solid PCM density [kg/m^3]
     bool flag_rho_S;
@@ -52,11 +57,16 @@ public:
     bool flag_t_0;
     double n_0[3];              // initial normal
     bool flag_n_0;
+    int subSteps;
+    bool flag_subSteps;
+    int temporalDiscretization;
+    bool flag_temporalDiscretization;
     
     string filename;
     unsigned int numberOfLines;
     
     IMinputFileParser(string filename);
+    void parseToModel(IMmodel&);
 };
 
 #endif /* IMinputFileParser_hpp */

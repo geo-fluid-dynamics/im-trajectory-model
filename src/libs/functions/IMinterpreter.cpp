@@ -11,7 +11,7 @@
 /*
  ----------------------------------------------------------------------------------
  Below you can see the numbering of the heating cartridges.
- The ice screw points in positive X direction (which follows from right hand rule)
+ The ice screw points in negative Z direction (which follows from right hand rule)
  
       15  16  1   2
    +-----------------+              +-------------+
@@ -19,14 +19,14 @@
    |  \ \ |   | / /  |              | \      \      \
  13| ---         --- | 4            |  \      \      \
    |        O        |----->        |   \      \      \ ------>
- 12| ---         --- | 5  Y+        |\   \   8  \   1  \     Y+
+ 12| ---         --- | 5  X         |\   \   8  \   1  \     X
    |  / / |   | \ \  |              | \   \      \      \
  11| / /  |   |  \ \ | 6            |  \   \      \      \
    +-----------------+              +   \ 7 \      \      \
     10    9 | 8   7                  \   \   \      \      \
             |                         \   \   \      \      \
             |                          \   \   \      \      \
-            V Z+                        \ 6 \   \~~~~~~\~~~~~~\
+            V Y                         \ 6 \   \~~~~~~\~~~~~~\
                                          \   \  $             $
                                           \   \ $             $
                                            \   \$             $
@@ -52,10 +52,10 @@ int IMinterpreter(bool* heaterStates,float *P_H,float *P_W){
      return value:   The melting mode
                        -1: stagnation
                         0: straight melting
-                        1: curvilinear melting Z+
-                        2: curvilinear melting Z-
-                        3: curvilinear melting Y+
-                        4: curvilinear melting Y-
+                        1: curvilinear melting Y+
+                        2: curvilinear melting Y-
+                        3: curvilinear melting X+
+                        4: curvilinear melting X-
      P_H:            The total power in the melting head
      P_W:            The power at the wall that drives curvilinear melting
      */
@@ -93,18 +93,18 @@ int IMinterpreter(bool* heaterStates,float *P_H,float *P_W){
     -abs(headHeaterPowerMat[0][0]+headHeaterPowerMat[0][1]-(headHeaterPowerMat[1][0]+headHeaterPowerMat[1][1]));
     
     if (D>0) {
-        if(headHeaterPowerMat[0][0]+headHeaterPowerMat[1][0]>headHeaterPowerMat[0][1]+headHeaterPowerMat[1][1]){ // Z+
+        if(headHeaterPowerMat[0][0]+headHeaterPowerMat[1][0]>headHeaterPowerMat[0][1]+headHeaterPowerMat[1][1]){ // Y+
             mMode=1;
             *P_W=wallHeaterPower*(wallHeaterStates[5]+wallHeaterStates[6]);
-        }else if(headHeaterPowerMat[0][0]+headHeaterPowerMat[1][0]<headHeaterPowerMat[0][1]+headHeaterPowerMat[1][1]){// % Z-
+        }else if(headHeaterPowerMat[0][0]+headHeaterPowerMat[1][0]<headHeaterPowerMat[0][1]+headHeaterPowerMat[1][1]){// % Y-
             mMode=2;
             *P_W=wallHeaterPower*(wallHeaterStates[1]+wallHeaterStates[2]);
         }
     }else if (D<0){
-        if(headHeaterPowerMat[1][1]+headHeaterPowerMat[1][0]>headHeaterPowerMat[0][0]+headHeaterPowerMat[0][1]){ // Y+
+        if(headHeaterPowerMat[1][1]+headHeaterPowerMat[1][0]>headHeaterPowerMat[0][0]+headHeaterPowerMat[0][1]){ // X+
             mMode=3;
             *P_W=wallHeaterPower*(wallHeaterStates[3]+wallHeaterStates[4]);
-        }else if(headHeaterPowerMat[1][1]+headHeaterPowerMat[1][0]<headHeaterPowerMat[0][0]+headHeaterPowerMat[0][1]){// % Y-
+        }else if(headHeaterPowerMat[1][1]+headHeaterPowerMat[1][0]<headHeaterPowerMat[0][0]+headHeaterPowerMat[0][1]){// % X-
             mMode=4;
             *P_W=wallHeaterPower*(wallHeaterStates[0]+wallHeaterStates[7]);
         }

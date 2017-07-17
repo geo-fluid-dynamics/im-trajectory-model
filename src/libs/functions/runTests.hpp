@@ -15,6 +15,7 @@
 #include "../functions/IMinterpreter.hpp"
 #include "../classes/IMmodel.hpp"
 #include "../classes/IMtrajectory.hpp"
+#include "../classes/IMinputFileParser.hpp"
 using namespace std;
 
 int testLogfileReading(string);

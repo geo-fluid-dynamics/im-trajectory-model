@@ -94,44 +94,10 @@ void LUevaluate(double l[9][9], double u[9][9], double b[9], double x[9]){
     }
 }
 
-IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,double* r_cDirection_0,unsigned int length){
-    
-    this->flag_r_c_direction_has_changed=0;
-    
+IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,unsigned int length){
     this->subSteps=0;
-    
-    this->length=length;
-    
-    this->method=0; // forward euler
-    
-    this->times = new double[this->length];
-    
-    this->p = new double*[this->length];
-    this->t = new double*[this->length];
-    this->n = new double*[this->length];
-    this->yplus = new double*[this->length];
-    
-    for (unsigned int i=0; i<3; i++) {
-        this->r_cDirection_0[i]=r_cDirection_0[i];
-        this->r_cDirection[i]=r_cDirection_0[i];
-        this->p_0[i]=p_0[i];
-        this->t_0[i]=t_0[i];
-        this->n_0[i]=n_0[i];
-    }
-
-    for(unsigned int i = 0; i < this->length; i++){
-        this->p[i] = new double[3];
-        this->t[i] = new double[3];
-        this->n[i] = new double[3];
-        this->yplus[i] = new double[3];
-    }
-    for (unsigned int i=0; i<3; i++) {
-        this->p[0][i]=this->p_0[i];
-        this->t[0][i]=this->t_0[i];
-        this->n[0][i]=this->n_0[i];
-        this->yplus[0][i]=this->n_0[i]; // set yplus at start equal to n
-    }
-    this->pos=1;
+    this->temporalDiscretization=0; // forward euler
+    IMtrajectory::reinitialize(p_0, t_0, n_0, length);
 }
 
 void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_cDirection){
@@ -165,10 +131,17 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     }
     
     
-    // check if r_cDirection has changed
-    if (this->r_cDirection[0] != r_cDirection[0] || this->r_cDirection[1] != r_cDirection[1] || this->r_cDirection[2] != r_cDirection[2]) {
-        
-        if (r_cDirection[0] < 0 || r_cDirection[1] < 0 || r_cDirection[2] < 0) {
+    // check if r_cDirection has changed -> eventually we have to flip the normal
+    if (this->r_cDirection[0] != r_cDirection[0] || this->r_cDirection[1] != r_cDirection[1]) {
+        if ((this->r_cDirection[0] == -r_cDirection[0] && this->r_cDirection[1] == r_cDirection[1]) || (this->r_cDirection[0] == r_cDirection[0] && this->r_cDirection[1] == -r_cDirection[1])) {
+            for (unsigned int k=0; k<3; k++) {
+                b[k]=-nOld[k];
+            }
+        }else
+            if ((this->r_cDirection[0]==-1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==1) ||
+                (this->r_cDirection[0]==1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==-1) ||
+                (this->r_cDirection[0]==0 && r_cDirection[0]==-1 && this->r_cDirection[1]==-1 && r_cDirection[1]==0) ||
+                (this->r_cDirection[0]==0 && r_cDirection[0]==1 && this->r_cDirection[1]==1 && r_cDirection[1]==0)) {
             b[0]=tOld[1]*nOld[2]-tOld[2]*nOld[1];
             b[1]=tOld[2]*nOld[0]-tOld[0]*nOld[2];
             b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
@@ -183,10 +156,10 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             
         for (unsigned int k=0; k<3; k++) {
             nOld[k]=b[k];
-            // save the new direction for the next add
-            this->r_cDirection[k]=r_cDirection[k];
         }
-            
+        // save the new direction for the next add
+        this->r_cDirection[0]=r_cDirection[0];
+        this->r_cDirection[1]=r_cDirection[1];
     }
     
     for (unsigned int i=0; i<this->subSteps+1; i++) {
@@ -196,11 +169,11 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
         b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
         
         for (unsigned int k=0; k<3; k++) {
-            if(this->method==0){ // forward euler
+            if(this->temporalDiscretization==0){ // forward euler
                 pNew[k]=pOld[k] + dtSub * U_0 * tOld[k];
                 tNew[k]=tOld[k] + dtSub * U_0/r_c * nOld[k];
                 nNew[k]=nOld[k] + dtSub * U_0 * ( tau * b[k] - tOld[k]/r_c);
-            }else if(this->method==1){ // implicit euler
+            }else if(this->temporalDiscretization==1){ // implicit euler
                 for(unsigned int m=0;m<9;m++){
                     A[m][m]=1;
                 }
@@ -264,11 +237,6 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     }
     
     for (unsigned int i=0; i<3; i++) {
-        if (this->flag_r_c_direction_has_changed) {
-            this->yplus[newPos][i]=-b[i];
-        }else{
-            this->yplus[newPos][i]=nNew[i];
-        }
         this->p[newPos][i]=pNew[i];
         this->t[newPos][i]=tNew[i];
         this->n[newPos][i]=nNew[i];
@@ -281,7 +249,6 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename);
     if (myfile.is_open())
     {
-        this->times[this->length-1]=this->times[this->length-2]; // because there is no dt for the last timestep
         myfile << "time px py pz tx ty tz nx ny nz y+_x y+_y y+_z" << endl;
         for (unsigned int i=0; i<this->length; i++) {
             myfile << this->times[i] << " "
@@ -293,10 +260,7 @@ void IMtrajectory::writeToDisk(string filename){
                    << this->t[i][2] << " "
                    << this->n[i][0] << " "
                    << this->n[i][1] << " "
-                   << this->n[i][2] << " "
-                   << this->yplus[i][0] << " "
-                   << this->yplus[i][1] << " "
-                   << this->yplus[i][2] << endl;
+                   << this->n[i][2] << endl;
         }
         myfile.close();
     }
@@ -307,5 +271,48 @@ void IMtrajectory::reset(void){
     this->pos=1;
     for (unsigned int i=0; i<3; i++) {
         this->r_cDirection[i]=this->r_cDirection_0[i];
+    }
+}
+
+void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length){
+    this->flag_r_c_direction_has_changed=0;
+    
+    this->length=length;
+    
+    this->times = new double[this->length];
+    this->times[0]=0;
+    
+    this->p = new double*[this->length];
+    this->t = new double*[this->length];
+    this->n = new double*[this->length];
+    
+    this->r_cDirection_0[0]=1;
+    this->r_cDirection_0[1]=0;
+    for (unsigned int i=0; i<2; i++) {
+        this->r_cDirection[i]=this->r_cDirection_0[i];
+    }
+    
+    for (unsigned int i=0; i<3; i++) {
+        this->p_0[i]=p_0[i];
+        this->t_0[i]=t_0[i];
+        this->n_0[i]=n_0[i];
+    }
+    
+    for(unsigned int i = 0; i < this->length; i++){
+        this->p[i] = new double[3];
+        this->t[i] = new double[3];
+        this->n[i] = new double[3];
+    }
+    for (unsigned int i=0; i<3; i++) {
+        this->p[0][i]=this->p_0[i];
+        this->t[0][i]=this->t_0[i];
+        this->n[0][i]=this->n_0[i];
+    }
+    this->pos=1;
+}
+
+void IMtrajectory::print(void){
+    for (unsigned int i=0; i<this->length; i++) {
+        printf("p[%i] = {%.5f,%.5f,%.5f},\t t[%i] = {%.5f,%.5f,%.5f},\t n[%i] = {%.5f,%.5f,%.5f}\n",i,p[i][0],p[i][1],p[i][2],i,t[i][0],t[i][1],t[i][2],i,n[i][0],n[i][1],n[i][2]);
     }
 }

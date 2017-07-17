@@ -67,12 +67,24 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-l"
+            argument = "-sl"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/kaischueller/Nextcloud/FieldTests/04062013/icemole_state.log"
+            argument = " $SRCROOT/test/simplifiedLogfile/test_sl2.csv"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/kaischueller/Desktop/geo-fluid-dynamics/im-trajectory-model/IMtrajectoryModel/test/simplifiedLogfile/Test2_turnrightResult.csv"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-l"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/kaischueller/Nextcloud/FieldTests/04062013/icemole_state.log"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i"

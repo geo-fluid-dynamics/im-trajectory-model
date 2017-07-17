@@ -8,6 +8,16 @@
 
 #include "IMinputFileParser.hpp"
 
+// Purpose: Add a value of a IMinputFileParser object to an IMmodel object
+template <typename T>
+void IMinputFileParser::useDataFromInputFile(bool flag, T* inputFileValue, T* modelValue,string filename, string variablename){
+    if (flag) {
+        *modelValue=*inputFileValue;
+    }else{
+        cout << "WARNING: " << variablename << " was not found in " << filename << ". Using the default value " << *modelValue << " instead." << endl;
+    }
+}
+
 void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_rho_S=0;
     this->flag_rho_L=0;
@@ -22,6 +32,7 @@ void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_H=0;
     this->flag_c1_tau=0;
     this->flag_c2_tau=0;
+    this->flag_subSteps=0;
 }
 
 IMinputFileParser::IMinputFileParser(string filename){
@@ -133,6 +144,12 @@ IMinputFileParser::IMinputFileParser(string filename){
                     }else if (!keyword.compare("c2_tau")){
                         this->c2_tau=value;
                         this->flag_c2_tau=1;
+                    }else if (!keyword.compare("subSteps")){
+                        this->subSteps=value;
+                        this->flag_subSteps=1;
+                    }else if (!keyword.compare("temporalDiscretization")){
+                        this->temporalDiscretization=value;
+                        this->flag_temporalDiscretization=1;
                     }else if (!keyword.compare("t_0")){
                         vector<string> sep = split(valueStr, ',');
                         this->t_0[0]=stod(sep[0]);
@@ -156,5 +173,50 @@ IMinputFileParser::IMinputFileParser(string filename){
         }
         
         
+    }
+}
+
+void IMinputFileParser::parseToModel(IMmodel& im_model){
+    
+    string inputFileName=this->filename;
+    
+    // now print a warning if variables has not been defined in the input file
+    useDataFromInputFile(this->flag_rho_S, &this->rho_S, &im_model.rho_S,inputFileName,"rho_S");
+    useDataFromInputFile(this->flag_rho_L, &this->rho_L, &im_model.rho_L,inputFileName,"rho_L");
+    useDataFromInputFile(this->flag_h_m, &this->h_m, &im_model.h_m,inputFileName,"h_m");
+    useDataFromInputFile(this->flag_T_m, &this->T_m, &im_model.T_m,inputFileName,"T_m");
+    useDataFromInputFile(this->flag_T_S, &this->T_S, &im_model.T_S,inputFileName,"T_S");
+    useDataFromInputFile(this->flag_c_p_S, &this->c_p_S, &im_model.c_p_S,inputFileName,"c_p_S");
+    useDataFromInputFile(this->flag_c_p_L, &this->c_p_L, &im_model.c_p_L,inputFileName,"c_p_S");
+    useDataFromInputFile(this->flag_k_L, &this->k_L, &im_model.k_L,inputFileName,"k_L");
+    useDataFromInputFile(this->flag_k_S, &this->k_S, &im_model.k_S,inputFileName,"k_S");
+    useDataFromInputFile(this->flag_L, &this->L, &im_model.L,inputFileName,"L");
+    useDataFromInputFile(this->flag_H, &this->H, &im_model.H,inputFileName,"H");
+    useDataFromInputFile(this->flag_c1_tau, &this->c1_tau, &im_model.c1_tau,inputFileName,"c1_tau");
+    useDataFromInputFile(this->flag_c2_tau, &this->c2_tau, &im_model.c2_tau,inputFileName,"c2_tau");
+    useDataFromInputFile(this->flag_subSteps, &this->subSteps, &im_model.subSteps,inputFileName,"subSteps");
+    useDataFromInputFile(this->flag_temporalDiscretization, &this->temporalDiscretization, &im_model.temporalDiscretization,inputFileName,"temporalDiscretization");
+    
+    if (this->flag_t_0) {
+        im_model.t_0[0]=this->t_0[0];
+        im_model.t_0[1]=this->t_0[1];
+        im_model.t_0[2]=this->t_0[2];
+    }else{
+        cout << "WARNING: t_0 was not found in " << inputFileName << ". Using the default values " << this->t_0[0] << "," << this->t_0[1] << "," << this->t_0[2] << " instead." << endl;
+    }
+    if (this->flag_n_0) {
+        im_model.n_0[0]=this->n_0[0];
+        im_model.n_0[1]=this->n_0[1];
+        im_model.n_0[2]=this->n_0[2];
+    }else{
+        cout << "WARNING: n_0 was not found in " << inputFileName << ". Using the default values " << this->n_0[0] << "," << this->n_0[1] << "," << this->n_0[2] << " instead." << endl;
+    }
+    
+    // make sure that we are using unit vectors
+    double norm_t_0=sqrt(im_model.t_0[0]*im_model.t_0[0]+im_model.t_0[1]*im_model.t_0[1]+im_model.t_0[2]*im_model.t_0[2]);
+    double norm_n_0=sqrt(im_model.n_0[0]*im_model.n_0[0]+im_model.n_0[1]*im_model.n_0[1]+im_model.n_0[2]*im_model.n_0[2]);
+    for (unsigned int i=0; i<3; i++) {
+        im_model.t_0[i]=im_model.t_0[i]/norm_t_0;
+        im_model.n_0[i]=im_model.n_0[i]/norm_n_0;
     }
 }

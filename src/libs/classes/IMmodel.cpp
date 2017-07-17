@@ -21,11 +21,24 @@ IMmodel::IMmodel(){
     this->r_cStraight=10000;        // curve radius which is used to mimic straight melting [m]
     this->L=2;                      // length of the IceMole [m]
     this->H=0.15;                   // width of the IceMole [m]
-    this->straightMeltingModel=0;     // 0: simple energy balance
-    this->curvilinearMeltingModel=0;  // 0: simple energy balance
-    this->r_cDirection[0]=0;
-    this->r_cDirection[1]=1;                 // we initialize the curve radius direction
-    this->r_cDirection[2]=0;
+    this->straightMeltingModel=0;   // 0: simple energy balance
+    this->curvilinearMeltingModel=0;// 0: simple energy balance
+    this->r_cDirection[0]=1;
+    this->r_cDirection[1]=0;
+    this->c1_tau=0;
+    this->c2_tau=0;
+    this->tau=0;
+    this->subSteps=0;
+    this->temporalDiscretization=0;
+    this->n_0[0]=1;
+    this->n_0[1]=0;
+    this->n_0[2]=0;
+    this->t_0[0]=0;
+    this->t_0[1]=0;
+    this->t_0[2]=-1;
+    this->p_0[0]=0;
+    this->p_0[1]=0;
+    this->p_0[2]=0;
 }
 
 void IMmodel::solve(){
@@ -37,24 +50,23 @@ void IMmodel::solve(){
         default:
             break;
     }
-    
-    r_cDirection[0]=0;
+
     switch (this->meltingMode) {
         case 1:
-            r_cDirection[1]=1;
-            r_cDirection[2]=0;
+            r_cDirection[0]=1;
+            r_cDirection[1]=0;
             break;
         case 2:
-            r_cDirection[1]=-1;
-            r_cDirection[2]=0;
+            r_cDirection[0]=-1;
+            r_cDirection[1]=0;
             break;
         case 3:
-            r_cDirection[1]=0;
-            r_cDirection[2]=-1;
+            r_cDirection[0]=0;
+            r_cDirection[1]=-1;
             break;
         case 4:
-            r_cDirection[1]=0;
-            r_cDirection[2]=1;
+            r_cDirection[0]=0;
+            r_cDirection[1]=1;
             break;
             
         default:
@@ -74,4 +86,6 @@ void IMmodel::solve(){
         default:
             break;
     }
+    // we assume that tau can be a linear function of the meling velocity
+    this->tau=this->U_0*this->c1_tau+this->c2_tau;
 }

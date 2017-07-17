@@ -66,12 +66,10 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
         while ( getline (myfile,line) )
         {
             this->numberOfLines++;
-            //cout << line << '\n';
         }
         
         this->content = new string[this->numberOfLines];
         this->dataLines = new bool[this->numberOfLines];
-        // delete[]this->content;
         
         myfile.clear();
         myfile.seekg(0, myfile.beg);
@@ -88,7 +86,6 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
                 this->numberOfDataLines++;
 
             }
-            //cout << this->content[i] << '\n';
         }
         
         if(this->numberOfLines==0){
@@ -115,7 +112,6 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
                         }else{
                             heaterStates[k][n]=true;
                         }
-                        //cout << heaterStates[k][n];
                     }
                 }else{
                     vector<string> dateValues=split(sep[0], '.');
@@ -130,10 +126,8 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
                         }else{
                             heaterStates[k][n]=true;
                         }
-                        //cout << heaterStates[k][n];
                     }
                 }
-                //cout << "\n";
                 k++;
             }
         }
@@ -151,5 +145,4 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
 };
 
 IMlogfile::~IMlogfile(){
-    //delete[] this->content;
 }

@@ -9,4 +9,10 @@ before_script:
     - cd build
     - cmake ..
 
-script: make 
+script:
+    - make -j
+    - make test -j
+
+branches:
+    only:
+        - master

@@ -21,11 +21,7 @@ make
 ```
 To make sure that everything works as expected, you can run the tests by
 ```
-./IMtrajectoryModel --test
-```
-or
-```
-./IMtrajectoryModel -t
+make test
 ```
 Run
 ```

@@ -14,6 +14,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cstdlib>
+#include <cstring>
 #include "../functions/utilities.hpp"
 #include "../classes/IMmodel.hpp"
 #include <cmath>

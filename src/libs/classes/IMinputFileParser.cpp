@@ -157,15 +157,15 @@ IMinputFileParser::IMinputFileParser(string filename){
                         this->flag_temporalDiscretization=1;
                     }else if (!keyword.compare("t_0")){
                         vector<string> sep = split(valueStr, ',');
-                        this->t_0[0]=stod(sep[0]);
-                        this->t_0[1]=stod(sep[1]);
-                        this->t_0[2]=stod(sep[2]);
+                        this->t_0[0]=atof(sep[0].c_str());
+                        this->t_0[1]=atof(sep[1].c_str());
+                        this->t_0[2]=atof(sep[2].c_str());
                         this->flag_t_0=1;
                     }else if (!keyword.compare("n_0")){
                         vector<string> sep = split(valueStr, ',');
-                        this->n_0[0]=stod(sep[0]);
-                        this->n_0[1]=stod(sep[1]);
-                        this->n_0[2]=stod(sep[2]);
+                        this->n_0[0]=atof(sep[0].c_str());
+                        this->n_0[1]=atof(sep[1].c_str());
+                        this->n_0[2]=atof(sep[2].c_str());
                         this->flag_n_0=1;
                     }else{
                         std::cerr << keyword << " is not a valid keyword." << std::endl;

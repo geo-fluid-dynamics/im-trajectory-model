@@ -104,7 +104,7 @@ IMinputFileParser::IMinputFileParser(string filename){
                         }
                     }
                     valueStr = content.substr(valueBegin,valueEnd-valueBegin);
-                    value=stod(valueStr);
+                    value=atof(valueStr.c_str());
                     
                     // Now compare keyword to check if we found variable names
                     if (!keyword.compare("rho_S")) {

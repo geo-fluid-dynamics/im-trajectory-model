@@ -53,7 +53,7 @@ IMinputFileParser::IMinputFileParser(string filename){
     
     this->filename=filename;
     string line;
-    ifstream myfile (this->filename);
+    ifstream myfile (this->filename.c_str());
     if (myfile.is_open())
     {
         this->numberOfLines=0;

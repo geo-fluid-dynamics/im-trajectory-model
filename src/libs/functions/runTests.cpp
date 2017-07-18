@@ -41,14 +41,6 @@ int runTests(string testName,int testNumber){
     
     if (testName=="IMLogfile") {
         switch (testNumber) {
-            case 1:
-            {
-                // Test 1
-                system("touch emptyfile.log");
-                flag_notPassed=testLogfileReading("emptyfile.log");
-                system("rm emptyfile.log");
-                break;
-            }
             /*case 2:
             {
                 // Test 2

@@ -246,7 +246,7 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
 }
 
 void IMtrajectory::writeToDisk(string filename){
-    ofstream myfile (filename);
+    ofstream myfile (filename.c_str());
     if (myfile.is_open())
     {
         myfile << "time px py pz tx ty tz nx ny nz" << endl;

@@ -119,6 +119,8 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     double rhs[9]={0};
     double epsilon=0;
     
+    double norm_t;
+    double norm_n;
     
     
     double dtSub=dt/(this->subSteps+1);
@@ -228,11 +230,18 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
                 }
                 
             }
+
             
             pOld[k]=pNew[k];
             tOld[k]=tNew[k];
             nOld[k]=nNew[k];
             
+        }
+        norm_t=sqrt(tOld[0]*tOld[0]+tOld[1]*tOld[1]+tOld[2]*tOld[2]);
+        norm_n=sqrt(nOld[0]*nOld[0]+nOld[1]*nOld[1]+nOld[2]*nOld[2]);
+        for (unsigned int k=0; k<3; k++) {
+            nOld[k]=nOld[k]/norm_n;
+            tOld[k]=tOld[k]/norm_t;
         }
     }
     

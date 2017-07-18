@@ -20,6 +20,6 @@ using namespace std;
 
 int testLogfileReading(string);
 
-int runTests(void);
+int runTests(string,int);
 
 #endif /* runTests_hpp */

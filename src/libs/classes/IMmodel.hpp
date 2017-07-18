@@ -28,8 +28,8 @@ public:
     float P_W;                      // active wall power [W]
     float U_0;                      // melting velocity [m/s]
     double r_cDirection[3];         // curve radius direction [-]
-    float r_c;                      // curve radius value [m]
-    float r_cStraight;              // curve radius which is used to mimic straight melting [m]
+    double r_c;                      // curve radius value [m]
+    double r_cStraight;              // curve radius which is used to mimic straight melting [m]
     double L;                       // length of the IceMole [m]
     double H;                       // width of the IceMole [m]
     int meltingMode;

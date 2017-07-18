@@ -27,6 +27,7 @@ private:
     void useDataFromInputFile(bool, T*, T* ,string , string );
     
 public:
+    bool isValidInputFile;
     double rho_S;                // solid PCM density [kg/m^3]
     bool flag_rho_S;
     double rho_L;                // liquid PCM density [kg/m^3]
@@ -59,6 +60,8 @@ public:
     bool flag_n_0;
     int subSteps;
     bool flag_subSteps;
+    double r_cStraight;
+    bool flag_r_cStraight;
     int temporalDiscretization;
     bool flag_temporalDiscretization;
     

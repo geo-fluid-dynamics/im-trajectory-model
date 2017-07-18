@@ -56,6 +56,7 @@ unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes
 }
 
 IMlogfile::IMlogfile(string filename, bool simpleLogfile){
+    this->isValidLogfile=1;
     unsigned int i;
     this->filename=filename;
     string line;
@@ -141,7 +142,10 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
         
     }
     
-    else cout << "Unable to open the file " << this->filename;
+    else{
+        this->isValidLogfile=0;
+        cout << "Unable to open the file " << this->filename << endl;
+    }
 };
 
 IMlogfile::~IMlogfile(){

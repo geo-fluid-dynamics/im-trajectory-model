@@ -64,15 +64,23 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-t"
-            isEnabled = "NO">
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "IMTrajectory"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "17"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sl"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = " $SRCROOT/test/simplifiedLogfile/test_sl2.csv"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/kaischueller/Desktop/geo-fluid-dynamics/im-trajectory-model/IMtrajectoryModel/test/simplifiedLogfile/Test2_turnrightResult.csv"

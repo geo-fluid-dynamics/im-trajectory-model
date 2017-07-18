@@ -74,8 +74,17 @@ int main(int argc, const char * argv[]) {
                 }
             
             }else if ((arg == "-t") || (arg == "--test")) {
-            
-                int flag_notPassed=runTests();
+                string testName;
+                int testNumber;
+                if (i + 2 < argc) { // Make sure we aren't at the end of argv!
+                    testName = argv[++i]; // Increment 'i' so we don't get the argument as the next argv[i].
+                    testNumber = atoi(argv[++i]);
+                } else { // there was no argument to the destination option.
+                    std::cerr << "--test option requires two arguments." << std::endl;
+                    return 1;
+                }
+                
+                int flag_notPassed=runTests(testName,testNumber);
                 return flag_notPassed;
             
             }else if ((arg == "-i") || (arg == "--input")) {
@@ -100,6 +109,12 @@ int main(int argc, const char * argv[]) {
     if(!logfileName.empty()){
         IMlogfile A(logfileName,simpleLogfile);
         
+        if (!A.isValidLogfile){
+            cout << A.isValidLogfile << endl;
+            cout << "Unable to open the file " << logfileName << endl;
+            return 1;
+        }
+        
         float P_H=0.;
         float P_W=0.;
         
@@ -111,6 +126,10 @@ int main(int argc, const char * argv[]) {
             
             // read the input file by creating an IMinputFileParser object
             IMinputFileParser inputFileObj(inputFileName);
+            if (!inputFileObj.isValidInputFile) {
+                cout << "Unable to open the file " << inputFileName;
+                return 1;
+            }
             inputFileObj.parseToModel(myIMmodel);
         }
         

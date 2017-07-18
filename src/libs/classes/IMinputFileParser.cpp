@@ -33,9 +33,11 @@ void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_c1_tau=0;
     this->flag_c2_tau=0;
     this->flag_subSteps=0;
+    this->flag_r_cStraight=0;
 }
 
 IMinputFileParser::IMinputFileParser(string filename){
+    this->isValidInputFile=1;
     string content;
     string keyword;
     string valueStr;
@@ -147,6 +149,9 @@ IMinputFileParser::IMinputFileParser(string filename){
                     }else if (!keyword.compare("subSteps")){
                         this->subSteps=value;
                         this->flag_subSteps=1;
+                    }else if (!keyword.compare("r_cStraight")){
+                        this->r_cStraight=value;
+                        this->flag_r_cStraight=1;
                     }else if (!keyword.compare("temporalDiscretization")){
                         this->temporalDiscretization=value;
                         this->flag_temporalDiscretization=1;
@@ -173,6 +178,8 @@ IMinputFileParser::IMinputFileParser(string filename){
         }
         
         
+    }else{
+        this->isValidInputFile=0;
     }
 }
 
@@ -195,6 +202,7 @@ void IMinputFileParser::parseToModel(IMmodel& im_model){
     useDataFromInputFile(this->flag_c1_tau, &this->c1_tau, &im_model.c1_tau,inputFileName,"c1_tau");
     useDataFromInputFile(this->flag_c2_tau, &this->c2_tau, &im_model.c2_tau,inputFileName,"c2_tau");
     useDataFromInputFile(this->flag_subSteps, &this->subSteps, &im_model.subSteps,inputFileName,"subSteps");
+    useDataFromInputFile(this->flag_r_cStraight, &this->r_cStraight, &im_model.r_cStraight,inputFileName,"r_cStraight");
     useDataFromInputFile(this->flag_temporalDiscretization, &this->temporalDiscretization, &im_model.temporalDiscretization,inputFileName,"temporalDiscretization");
     
     if (this->flag_t_0) {

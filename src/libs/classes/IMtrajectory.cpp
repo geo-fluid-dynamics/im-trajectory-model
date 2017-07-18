@@ -249,7 +249,7 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename);
     if (myfile.is_open())
     {
-        myfile << "time px py pz tx ty tz nx ny nz y+_x y+_y y+_z" << endl;
+        myfile << "time px py pz tx ty tz nx ny nz" << endl;
         for (unsigned int i=0; i<this->length; i++) {
             myfile << this->times[i] << " "
                    << this->p[i][0] << " "

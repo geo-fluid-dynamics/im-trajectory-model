@@ -1,4 +1,5 @@
 # IMtrajectoryModel
+[![Build Status](https://travis-ci.org/geo-fluid-dynamics/im-trajectory-model.svg?branch=master)](https://travis-ci.org/geo-fluid-dynamics/im-trajectory-model)
 A tool that converts heater state changes of the IceMole to a trajectory.
 
 The heater state changes can be provided by two possible input files, namely a logfile and a simplified logfile. An example for a logfile is given by `IMtrajectoryModel/test/logfile/icemole_state.log`. Examples for simplified logfiles can be found in `IMtrajectoryModel/test/simplifiedLogfile/`.

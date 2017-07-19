@@ -1,17 +1,18 @@
 # IMtrajectoryModel
 [![Build Status](https://travis-ci.org/geo-fluid-dynamics/im-trajectory-model.svg?branch=master)](https://travis-ci.org/geo-fluid-dynamics/im-trajectory-model)
 
-A tool that converts heater state changes of the IceMole to a trajectory.
+A tool that converts heater state changes of a maneuverable melting probe to a trajectory.
 
 The heater state changes can be provided by two possible input files, namely a logfile and a simplified logfile. An example for a logfile is given by `test/logfile/icemole_state.log`. Examples for simplified logfiles can be found in `test/simplifiedLogfile/`.
 
+Geo Fluid Dynamics - A research group at RWTH Aachen University
 Author: K. Schüller schueller@aices.rwth-aachen.de
 
 ## Dependencies
 * [CMake](https://cmake.org)
 
 ## Getting Started
-To build the tool, create a build fold in the root directoy
+To build IMtrajectoryModel, create a build folder in the root directory
 ```
 make build
 cd build
@@ -34,11 +35,11 @@ In order to use IMtrajectoryModel to calculate a melting trajectory from an IceM
 ```
 ./IMtrajectoryModel -l LOGFILE -i INPUTFILE -o OUTPUTFILE
 ```
-in which `LOGFILE` is the location of the IceMole logfile, `INPUTFILE` the location of the input file (e.g. inputs.ini) and `OUTPUTFILE` the location where you want to save the melting trajectory.
+in which `LOGFILE` is the location of the logfile that contains the heater states, `INPUTFILE` the location of the input file (e.g. inputs.ini) and `OUTPUTFILE` is the location where to save the melting trajectory.
 
 ## Coordinate System (COS)
 ### Melting Probe COS (local COS)
-The IDs of the heating cartridges and wall heaters are used to define the melting probe COS as shown in the following schematic (note that the viewer looks from the back of the melting probe to the melting direction)
+The IDs of the heating cartridges in the melting head and wall heaters are used to define the melting probe COS as shown in the following schematic (note that the viewer looks from the back of the melting probe to the melting direction)
 
 ![IMschematic](doc/github/IMschematic.png)
 
@@ -77,18 +78,22 @@ The global COS (x-, y- and z-direction) is connected to the melting probe COS by
 | Wall Heater 8 | 24 |
 
 ## Postprocessing
-The trajectory given in the output file after successful of IMtrajectoryModel is given by
+The trajectory given in the output file after successful execution of IMtrajectoryModel is given by
 
-| time | px | py | pz | tx | ty | tz | nx | ny | nz |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0 | px_0 | py_0 | pz_0 | tx_0 | ty_0 | tz_0 | nx_0 | ny_0 | nz_0 |
-| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+| time | px | py | pz | tx | ty | tz | nx | ny | nz | distance
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | px_0 | py_0 | pz_0 | tx_0 | ty_0 | tz_0 | nx_0 | ny_0 | nz_0 | 0 |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
 in which<br>
   **time**        is the time in seconds strating from 0<br>
   **px, py, pz**  is the position in meter<br>
   **tx, ty, tz**  is the tangential vector of the trajectory in meter<br>
-  **nx, ny, nz**  is the normal vector of the trajectory in meter
+  **nx, ny, nz**  is the normal vector of the trajectory in meter<br>
+  **length**      is the total molten length (arc length) of the trajectory
+
+## Miscellaneous
+* If computing time is an issue, the user can prevent calculating the arc length of the trajectory using the `--distance` option with the value `0`. The resulting output will still contain the column `distance` but with all values set to `-1`.
 
 ## Limitations/Problems
 * The normal and tangent vectors in the output file may flip. This is because they describe the trajectory and not the orientation of the melting probe. Currently there is no information about the melting probe orientation.

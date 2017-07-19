@@ -126,6 +126,8 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     double dtSub=dt/(this->subSteps+1);
     this->times[newPos]=this->times[oldPos]+dt;
     
+    this->distance[newPos]=this->distance[oldPos];
+    
     for (unsigned int i=0; i<3; i++) {
         pOld[i]=this->p[oldPos][i];
         tOld[i]=this->t[oldPos][i];
@@ -230,12 +232,16 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
                 }
                 
             }
-
             
+        }
+        if (flagCalcDistance) {
+            this->distance[newPos]=this->distance[newPos]+sqrt(pow(pNew[0]-pOld[0],2)+pow(pNew[1]-pOld[1],2)+pow(pNew[2]-pOld[2],2));
+        }
+        
+        for (unsigned int k=0; k<3; k++) {
             pOld[k]=pNew[k];
             tOld[k]=tNew[k];
             nOld[k]=nNew[k];
-            
         }
         norm_t=sqrt(tOld[0]*tOld[0]+tOld[1]*tOld[1]+tOld[2]*tOld[2]);
         norm_n=sqrt(nOld[0]*nOld[0]+nOld[1]*nOld[1]+nOld[2]*nOld[2]);
@@ -258,8 +264,11 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename.c_str());
     if (myfile.is_open())
     {
-        myfile << "time px py pz tx ty tz nx ny nz" << endl;
+        myfile << "time px py pz tx ty tz nx ny nz distance" << endl;
         for (unsigned int i=0; i<this->length; i++) {
+            if (!this->flagCalcDistance) {
+                this->distance[i]=-1;
+            }
             myfile << this->times[i] << " "
                    << this->p[i][0] << " "
                    << this->p[i][1] << " "
@@ -269,7 +278,8 @@ void IMtrajectory::writeToDisk(string filename){
                    << this->t[i][2] << " "
                    << this->n[i][0] << " "
                    << this->n[i][1] << " "
-                   << this->n[i][2] << endl;
+                   << this->n[i][2] << " "
+                   << this->distance[i] << endl;
         }
         myfile.close();
     }
@@ -290,6 +300,11 @@ void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned 
     
     this->times = new double[this->length];
     this->times[0]=0;
+    
+    this->distance = new double[this->length];
+    this->distance[0]=0;
+    this->flagCalcDistance=true;
+    
     
     this->p = new double*[this->length];
     this->t = new double*[this->length];

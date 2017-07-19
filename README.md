@@ -5,7 +5,7 @@ A tool that converts heater state changes of a maneuverable melting probe to a t
 
 The heater state changes can be provided by two possible input files, namely a logfile and a simplified logfile. An example for a logfile is given by `test/logfile/icemole_state.log`. Examples for simplified logfiles can be found in `test/simplifiedLogfile/`.
 
-Geo Fluid Dynamics - A research group at RWTH Aachen University
+[Geo Fluid Dynamics](www.gfd.rwth-aachen.de) - A research group at RWTH Aachen University<br>
 Author: K. Schüller schueller@aices.rwth-aachen.de
 
 ## Dependencies

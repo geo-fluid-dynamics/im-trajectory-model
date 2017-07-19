@@ -23,7 +23,7 @@ foreach(number 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)
   add_test(NAME IMTrajectory${number} COMMAND IMtrajectoryModel -t IMTrajectory ${number})
 endforeach()
 
-foreach(number 1 2 3 4 5 6 7 8)
+foreach(number 1 2 3 4 5 6 7)
 add_test(NAME IMtrajectoryModel_test_sl${number} COMMAND IMtrajectoryModel -sl ../test/simplifiedLogfile/test_sl${number}/test_sl${number}.csv -i ../test/simplifiedLogfile/test_sl${number}/test_sl${number}.ini -o Testing/test_sl${number}.result)
 add_test(IMtrajectoryModel_test_sl${number}_Compare ${CMAKE_COMMAND} -E compare_files Testing/test_sl${number}.result
 ../test/simplifiedLogfile/test_sl${number}/test_sl${number}.result)

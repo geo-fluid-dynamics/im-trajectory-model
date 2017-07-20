@@ -30,8 +30,7 @@ void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_k_S=0;
     this->flag_L=0;
     this->flag_H=0;
-    this->flag_c1_tau=0;
-    this->flag_c2_tau=0;
+    this->flag_tau=0;
     this->flag_subSteps=0;
     this->flag_r_cStraight=0;
 }
@@ -140,12 +139,9 @@ IMinputFileParser::IMinputFileParser(string filename){
                     }else if (!keyword.compare("H")){
                         this->H=value;
                         this->flag_H=1;
-                    }else if (!keyword.compare("c1_tau")){
-                        this->c1_tau=value;
-                        this->flag_c1_tau=1;
-                    }else if (!keyword.compare("c2_tau")){
-                        this->c2_tau=value;
-                        this->flag_c2_tau=1;
+                    }else if (!keyword.compare("tau")){
+                        this->tau=value;
+                        this->flag_tau=1;
                     }else if (!keyword.compare("subSteps")){
                         this->subSteps=value;
                         this->flag_subSteps=1;
@@ -169,7 +165,7 @@ IMinputFileParser::IMinputFileParser(string filename){
                         this->flag_n_0=1;
                     }else{
                         std::cerr << keyword << " is not a valid keyword." << std::endl;
-                        return;
+                        continue;
                     }
                     
                     break;
@@ -199,8 +195,7 @@ void IMinputFileParser::parseToModel(IMmodel& im_model){
     useDataFromInputFile(this->flag_k_S, &this->k_S, &im_model.k_S,inputFileName,"k_S");
     useDataFromInputFile(this->flag_L, &this->L, &im_model.L,inputFileName,"L");
     useDataFromInputFile(this->flag_H, &this->H, &im_model.H,inputFileName,"H");
-    useDataFromInputFile(this->flag_c1_tau, &this->c1_tau, &im_model.c1_tau,inputFileName,"c1_tau");
-    useDataFromInputFile(this->flag_c2_tau, &this->c2_tau, &im_model.c2_tau,inputFileName,"c2_tau");
+    useDataFromInputFile(this->flag_tau, &this->tau, &im_model.tau,inputFileName,"tau");
     useDataFromInputFile(this->flag_subSteps, &this->subSteps, &im_model.subSteps,inputFileName,"subSteps");
     useDataFromInputFile(this->flag_r_cStraight, &this->r_cStraight, &im_model.r_cStraight,inputFileName,"r_cStraight");
     useDataFromInputFile(this->flag_temporalDiscretization, &this->temporalDiscretization, &im_model.temporalDiscretization,inputFileName,"temporalDiscretization");

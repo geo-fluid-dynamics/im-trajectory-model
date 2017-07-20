@@ -25,8 +25,6 @@ IMmodel::IMmodel(){
     this->curvilinearMeltingModel=0;// 0: simple energy balance
     this->r_cDirection[0]=1;
     this->r_cDirection[1]=0;
-    this->c1_tau=0;
-    this->c2_tau=0;
     this->tau=0;
     this->subSteps=0;
     this->temporalDiscretization=0;
@@ -86,6 +84,4 @@ void IMmodel::solve(){
         default:
             break;
     }
-    // we assume that tau can be a linear function of the meling velocity
-    this->tau=this->U_0*this->c1_tau+this->c2_tau;
 }

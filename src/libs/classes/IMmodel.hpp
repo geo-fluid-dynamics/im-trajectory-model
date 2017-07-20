@@ -41,8 +41,6 @@ public:
     double tau;
     int subSteps;
     int temporalDiscretization;
-    double c1_tau;                  // polynomial coefficients for linear equation for tau
-    double c2_tau;                  // polynomial coefficients for linear equation for tau
     IMmodel();
     void solve();
 };

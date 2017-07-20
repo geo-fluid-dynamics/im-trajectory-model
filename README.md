@@ -93,6 +93,7 @@ in which<br>
   **length**      is the total molten length (arc length) of the trajectory
 
 ## Miscellaneous
+* `tau` is the torsion, given in rad/m. With defining tau, the user can set the rotation around the melting probes' main axis. E.g. if the melting probe should rotate 180° every 2 meter, `tau` is simply pi/(2 m).
 * If computing time is an issue, the user can prevent calculating the arc length of the trajectory using the `--distance` option with the value `0`. The resulting output will still contain the column `distance` but with all values set to `-1`.
 
 ## Limitations/Problems

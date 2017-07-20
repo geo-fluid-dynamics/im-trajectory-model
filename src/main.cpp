@@ -23,7 +23,7 @@ static void show_usage(void)
     << "Options:\n"
     << "\t-h,--help\t\tShow this help message\n"
     << "\t-l,--logfile\t\tSpecify the logile name\n"
-    << "\t-sl,--simplelogfile\t\tSpecify the simple logile name\n"
+    << "\t-sl,--simplelogfile\tSpecify the simple logile name\n"
     << "\t-i,--input\t\tSpecify the input file name (*.ini)\n"
     << "\t-d,--distance\t\tDecide if the total distance should be calculated (0: no, 1: yes)\n"
     << "\t-t,--test\t\tRun tests\n"

@@ -23,8 +23,9 @@ static void show_usage(void)
     << "Options:\n"
     << "\t-h,--help\t\tShow this help message\n"
     << "\t-l,--logfile\t\tSpecify the logile name\n"
-    << "\t-sl,--simplelogfile\t\tSpecify the simple logile name\n"
+    << "\t-sl,--simplelogfile\tSpecify the simple logile name\n"
     << "\t-i,--input\t\tSpecify the input file name (*.ini)\n"
+    << "\t-d,--distance\t\tDecide if the total distance should be calculated (0: no, 1: yes)\n"
     << "\t-t,--test\t\tRun tests\n"
     << std::endl;
 }
@@ -35,6 +36,7 @@ int main(int argc, const char * argv[]) {
     string outputName="trajectory.log";
     string inputFileName="";
     bool simpleLogfile=false;
+    bool flagCalcDistance=true;
     
     // Check command line arguments
     if (argc > 0) {
@@ -96,6 +98,15 @@ int main(int argc, const char * argv[]) {
                     return 1;
                 }
             
+            }else if ((arg == "-d") || (arg == "--distance")) {
+                
+                if (i + 1 < argc) { // Make sure we aren't at the end of argv!
+                    flagCalcDistance = atoi(argv[++i]); // Increment 'i' so we don't get the argument as the next argv[i].
+                } else { // there was no argument to the destination option.
+                    std::cerr << "--distance option requires one argument." << std::endl;
+                    return 1;
+                }
+                
             } else {
             
                 std::cerr << "Not a valid input. Use --help to see valid inputs." << std::endl;
@@ -139,6 +150,7 @@ int main(int argc, const char * argv[]) {
         IMtrajectory trajectory(myIMmodel.p_0,myIMmodel.t_0,myIMmodel.n_0,A.numberOfDataLines);
         trajectory.temporalDiscretization=myIMmodel.temporalDiscretization;
         trajectory.subSteps=myIMmodel.subSteps;
+        trajectory.flagCalcDistance=flagCalcDistance;
         
         for (unsigned int i=0; i<A.numberOfDataLines-1; i++) {
             myIMmodel.meltingMode=IMinterpreter(A.heaterStates[i], &P_H, &P_W);
@@ -146,7 +158,7 @@ int main(int argc, const char * argv[]) {
             // parse the power values and calculate the melting velocity and curve radius
             myIMmodel.P_W=P_W;
             myIMmodel.P_H=P_H;
-            //cout << "P_H=" << P_H << " " << "P_W=" << P_W << endl;
+            
             myIMmodel.solve();
             
             trajectory.add(A.timeInSeconds[i+1]-A.timeInSeconds[i],myIMmodel.U_0,myIMmodel.r_c,myIMmodel.tau,myIMmodel.r_cDirection);

@@ -27,6 +27,9 @@ public:
     double** t;                 // tangents for all times
     double** n;                 // normals for all times
     double* times;              // time points (starts at 0)
+    double* distance;           // total moltmen distance (starts at 0)
+    bool flagCalcDistance;      // if flag is zero than the distance will not be calculated
+                                // in the output in distance column, all values will be set to -1
     unsigned int length;        // the length positions
     unsigned int subSteps;      // the frenet-serret equations are solved subSteps+1 times for each time
     int temporalDiscretization; // 0: forward; 1: backward

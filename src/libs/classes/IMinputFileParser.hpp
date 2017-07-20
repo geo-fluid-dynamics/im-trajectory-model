@@ -52,10 +52,8 @@ public:
     bool flag_L;
     double H;                    // width of the IceMole [m]
     bool flag_H;
-    double c1_tau;
-    bool flag_c1_tau;
-    double c2_tau;
-    bool flag_c2_tau;
+    double tau;
+    bool flag_tau;
     double t_0[3];              // initial tangent
     bool flag_t_0;
     double n_0[3];              // initial normal

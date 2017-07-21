@@ -31,9 +31,14 @@ Run
 ./IMtrajectoryModel -h
 ```
 to see all possible input options.
-In order to use IMtrajectoryModel to calculate a melting trajectory from an IceMole logfile you can run
+
+In order to use IMtrajectoryModel to calculate a melting trajectory from a logfile that includes heater states of a melting probe you can run
 ```
 ./IMtrajectoryModel -l LOGFILE -i INPUTFILE -o OUTPUTFILE
+```
+or for a simplified logfile that contains less information (see `test/` for examples how those files should look like)
+```
+./IMtrajectoryModel -sl LOGFILE -i INPUTFILE -o OUTPUTFILE
 ```
 in which `LOGFILE` is the location of the logfile that contains the heater states, `INPUTFILE` the location of the input file (e.g. inputs.ini) and `OUTPUTFILE` is the location where to save the melting trajectory.
 

@@ -14,7 +14,7 @@ Author: K. Schüller schueller@aices.rwth-aachen.de
 ## Getting Started
 To build IMtrajectoryModel, create a build folder in the root directory
 ```
-make build
+mkdir build
 cd build
 ```
 Then execute

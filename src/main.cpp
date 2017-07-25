@@ -161,6 +161,13 @@ int main(int argc, const char * argv[]) {
             
             myIMmodel.solve();
             
+            // if the mode is straight melting, we don't need more than one substeps
+            if (myIMmodel.meltingMode==0) {
+                trajectory.subSteps=1;
+            }else{
+                trajectory.subSteps=myIMmodel.subSteps;
+            }
+            
             trajectory.add(A.timeInSeconds[i+1]-A.timeInSeconds[i],myIMmodel.U_0,myIMmodel.r_c,myIMmodel.tau,myIMmodel.r_cDirection);
             
         }

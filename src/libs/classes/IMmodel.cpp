@@ -20,6 +20,7 @@ IMmodel::IMmodel(){
     this->r_cStraight=10000;        // curve radius which is used to mimic straight melting [m]
     this->L=2;                      // length of the IceMole [m]
     this->H=0.15;                   // width of the IceMole [m]
+    this->F_H=1000;                 // exerted force [N]
     this->straightMeltingModel=0;   // 0: simple energy balance
     this->curvilinearMeltingModel=0;// 0: simple energy balance
     this->r_cDirection[0]=1;
@@ -40,17 +41,21 @@ IMmodel::IMmodel(){
 
 void IMmodel::solve(){
     
-    double R=this->H*this->H*sqrt(1.0/M_PI); // calculate R which has the same area than H*H
-    double U_0_min=0.000001;
-    double U_0_max=1;
-    double error=0.0000001;
+    double R=this->H*sqrt(1.0/M_PI); // calculate R which has the same area than H*H
+    double U_0_min=0.00000001;
+    double U_0_max=0.1;
+    double error=0.00000000001;
     
     switch (this->straightMeltingModel) {
         case 0:
             this->U_0=this->P_H/(this->H * this->H * this->rho_S * (this->h_m + this->c_p_S * (this->T_m - this->T_S)));
             break;
         case 1: // improved analytical solution
-            this->U_0=improvedAnalyticalModel_velocity(this->F_H,this->P_H,this->rho_S,this->rho_L,this->c_p_S,this->c_p_L,this->mu_L,this->k_L,R,this->h_m,this->T_m,this->T_S,U_0_min,U_0_max,error);
+            if(this->P_H==0){
+                this->U_0=0;
+            }else{
+                this->U_0=improvedAnalyticalModel_velocity(this->F_H,this->P_H,this->rho_S,this->rho_L,this->c_p_S,this->c_p_L,this->mu_L,this->k_L,R,this->h_m,this->T_m,this->T_S,U_0_min,U_0_max,error);
+            }
             break;
         default:
             break;

@@ -67,12 +67,20 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "IMTrajectory"
+            argument = "improvedAnalyticalModel"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "17"
+            argument = "1"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "IMTrajectory"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "17"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sl"

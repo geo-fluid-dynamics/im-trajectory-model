@@ -33,6 +33,10 @@ void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_tau=0;
     this->flag_subSteps=0;
     this->flag_r_cStraight=0;
+    this->flag_temporalDiscretization=0;
+    this->flag_straightMeltingModel=0;
+    this->flag_F_H=0;
+    this->flag_mu_L=0;
 }
 
 IMinputFileParser::IMinputFileParser(string filename){
@@ -151,6 +155,15 @@ IMinputFileParser::IMinputFileParser(string filename){
                     }else if (!keyword.compare("temporalDiscretization")){
                         this->temporalDiscretization=value;
                         this->flag_temporalDiscretization=1;
+                    }else if (!keyword.compare("straightMeltingModel")){
+                        this->straightMeltingModel=value;
+                        this->flag_straightMeltingModel=1;
+                    }else if (!keyword.compare("F_H")){
+                        this->F_H=value;
+                        this->flag_F_H=1;
+                    }else if (!keyword.compare("mu_L")){
+                        this->mu_L=value;
+                        this->flag_mu_L=1;
                     }else if (!keyword.compare("t_0")){
                         vector<string> sep = split(valueStr, ',');
                         this->t_0[0]=atof(sep[0].c_str());
@@ -199,6 +212,9 @@ void IMinputFileParser::parseToModel(IMmodel& im_model){
     useDataFromInputFile(this->flag_subSteps, &this->subSteps, &im_model.subSteps,inputFileName,"subSteps");
     useDataFromInputFile(this->flag_r_cStraight, &this->r_cStraight, &im_model.r_cStraight,inputFileName,"r_cStraight");
     useDataFromInputFile(this->flag_temporalDiscretization, &this->temporalDiscretization, &im_model.temporalDiscretization,inputFileName,"temporalDiscretization");
+    useDataFromInputFile(this->flag_straightMeltingModel, &this->straightMeltingModel, &im_model.straightMeltingModel,inputFileName,"straightMeltingModel");
+    useDataFromInputFile(this->flag_F_H, &this->F_H, &im_model.F_H,inputFileName,"F_H");
+    useDataFromInputFile(this->flag_mu_L, &this->mu_L, &im_model.mu_L,inputFileName,"mu_L");
     
     if (this->flag_t_0) {
         im_model.t_0[0]=this->t_0[0];

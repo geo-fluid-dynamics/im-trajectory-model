@@ -29,7 +29,7 @@ public:
     float P_H;                      // melting head power [W]
     float P_W;                      // active wall power [W]
     float U_0;                      // melting velocity [m/s]
-    float F_H;                      // total exerted force (e.g. weight minus buoyancy force) [N]
+    double F_H;                     // total exerted force (e.g. weight minus buoyancy force) [N]
     double r_cDirection[3];         // curve radius direction [-]
     double r_c;                     // curve radius value [m]
     double r_cStraight;             // curve radius which is used to mimic straight melting [m]

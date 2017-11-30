@@ -114,4 +114,3 @@ in which<br>
 * If computing time is an issue, the user can prevent calculating the arc length of the trajectory using the `--distance` option with the value `0`. The resulting output will still contain the column `distance` but with all values set to `-1`.
 
 ## Limitations/Problems
-* The normal and tangent vectors in the output file may flip. This is because they describe the trajectory and not the orientation of the melting probe. Currently there is no information about the melting probe orientation.

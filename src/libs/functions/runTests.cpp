@@ -434,6 +434,33 @@ int runTests(string testName,int testNumber){
             default:
                 break;
         }
+    }else if (testName=="improvedAnalyticalModel"){
+        
+        double F_H=1;
+        float P_H=1000;
+        double rho_S=921.3;
+        double rho_L=1000;
+        double c_p_S=1877;
+        double c_p_L=4200;
+        double mu_L=0.0013;
+        double k_L=0.6;
+        double R=0.06;
+        double h_m=333700;
+        double T_m=0;
+        double T_S=-63;
+        double U_0_min=0.000001;
+        double U_0_max=1;
+        double error=0.000000000001;
+        double veloResult;
+        
+        switch (testNumber) {
+            case 1:
+                veloResult=improvedAnalyticalModel_velocity(F_H,P_H,rho_S,rho_L,c_p_S,c_p_L,mu_L,k_L,R,h_m,T_m,T_S,U_0_min,U_0_max,error);
+                //cout << veloResult*3600 << endl;
+                flag_notPassed=!(abs(veloResult*3600-0.6688)<0.0001);
+            default:
+                break;
+        }
     }
 
     return flag_notPassed;

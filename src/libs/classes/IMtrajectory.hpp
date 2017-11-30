@@ -26,6 +26,7 @@ public:
     double** p;                 // positions for all times
     double** t;                 // tangents for all times
     double** n;                 // normals for all times
+    double** n_fixed;           // fixed normals for all times
     double* times;              // time points (starts at 0)
     double* distance;           // total moltmen distance (starts at 0)
     bool flagCalcDistance;      // if flag is zero than the distance will not be calculated
@@ -35,7 +36,6 @@ public:
     int temporalDiscretization; // 0: forward; 1: backward
     double r_cDirection_0[2];   // initial direction of curve radius
     double r_cDirection[2];     // last r_cDirection
-    bool flag_r_c_direction_has_changed;
     
     IMtrajectory(double* p_0, double* t_0, double* n_0, unsigned int length);
     void add(double,double,double,double,double*);

@@ -42,6 +42,17 @@ or for a simplified logfile that contains less information (see `test/` for exam
 ```
 in which `LOGFILE` is the location of the logfile that contains the heater states, `INPUTFILE` the location of the input file (e.g. inputs.ini) and `OUTPUTFILE` is the location where to save the melting trajectory.
 
+## Examples
+![turnrightExample](doc/github/turnrightExample.png)
+
+## Models
+The models can be selected in the input file. Currently, there is only one model for curvilinear melting.
+### Straight melting models
+* Energy balance
+* Improved analytical solution based on close-contact melting theory
+### Curvilinear melting models
+* Energy balance
+
 ## Coordinate System (COS)
 ### Melting Probe COS (local COS)
 The IDs of the heating cartridges in the melting head and wall heaters are used to define the melting probe COS as shown in the following schematic (note that the viewer looks from the back of the melting probe to the melting direction)
@@ -85,17 +96,18 @@ The global COS (x-, y- and z-direction) is connected to the melting probe COS by
 ## Postprocessing
 The trajectory given in the output file after successful execution of IMtrajectoryModel is given by
 
-| time | px | py | pz | tx | ty | tz | nx | ny | nz | distance
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0 | px_0 | py_0 | pz_0 | tx_0 | ty_0 | tz_0 | nx_0 | ny_0 | nz_0 | 0 |
-| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+| time | px | py | pz | tx | ty | tz | nx | ny | nz | distance | nx_fixed | ny_fixed | nz_fixed |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | px_0 | py_0 | pz_0 | tx_0 | ty_0 | tz_0 | nx_0 | ny_0 | nz_0 | 0 | nx_fixed_0 | ny_fixed_0 | nz_fixed_0 |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
 in which<br>
   **time**        is the time in seconds strating from 0<br>
   **px, py, pz**  is the position in meter<br>
   **tx, ty, tz**  is the tangential vector of the trajectory in meter<br>
   **nx, ny, nz**  is the normal vector of the trajectory in meter<br>
-  **length**      is the total molten length (arc length) of the trajectory
+  **length**      is the total molten length (arc length) of the trajectory<br>
+  **nx_fixed, ny_fixed, nz_fixed** is the normal vector that does not flip due to a heater activity change in the melting head (can be used e.g. for visualization)
 
 ## Miscellaneous
 * `tau` is the torsion, given in rad/m. With defining tau, the user can set the rotation around the melting probes' main axis. E.g. if the melting probe should rotate 180° every 2 meter, `tau` is simply pi/(2 m).

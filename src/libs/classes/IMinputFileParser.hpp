@@ -64,6 +64,12 @@ public:
     bool flag_r_cStraight;
     int temporalDiscretization;
     bool flag_temporalDiscretization;
+    int straightMeltingModel;
+    bool flag_straightMeltingModel;
+    double F_H;                 // exerted force [N]
+    bool flag_F_H;
+    double mu_L;                // dynamic viscosity [Ns/(m^2)]
+    bool flag_mu_L;
     
     string filename;
     unsigned int numberOfLines;

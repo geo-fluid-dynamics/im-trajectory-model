@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DA06CB831EE4699F00FE6241 /* IMinputFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA06CB811EE4699F00FE6241 /* IMinputFileParser.cpp */; };
+		DA68CD751FCDC2340004461E /* improvedAnalyticalModel_velocity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA68CD731FCDC2340004461E /* improvedAnalyticalModel_velocity.cpp */; };
 		DA6985D61EEFEC3600180EC6 /* utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA6985D41EEFEC3600180EC6 /* utilities.cpp */; };
 		DA9A31D21EDC6ECD00B67414 /* runTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA9A31D01EDC6ECD00B67414 /* runTests.cpp */; };
 		DAE7F0971F1D130C00BACE8C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE7F0961F1D130C00BACE8C /* main.cpp */; };
@@ -32,6 +33,8 @@
 /* Begin PBXFileReference section */
 		DA06CB811EE4699F00FE6241 /* IMinputFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMinputFileParser.cpp; path = src/libs/classes/IMinputFileParser.cpp; sourceTree = SOURCE_ROOT; };
 		DA06CB821EE4699F00FE6241 /* IMinputFileParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMinputFileParser.hpp; path = src/libs/classes/IMinputFileParser.hpp; sourceTree = SOURCE_ROOT; };
+		DA68CD731FCDC2340004461E /* improvedAnalyticalModel_velocity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = improvedAnalyticalModel_velocity.cpp; path = src/libs/functions/improvedAnalyticalModel_velocity.cpp; sourceTree = SOURCE_ROOT; };
+		DA68CD741FCDC2340004461E /* improvedAnalyticalModel_velocity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = improvedAnalyticalModel_velocity.hpp; path = src/libs/functions/improvedAnalyticalModel_velocity.hpp; sourceTree = SOURCE_ROOT; };
 		DA6985D41EEFEC3600180EC6 /* utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utilities.cpp; path = src/libs/functions/utilities.cpp; sourceTree = SOURCE_ROOT; };
 		DA6985D51EEFEC3600180EC6 /* utilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utilities.hpp; path = src/libs/functions/utilities.hpp; sourceTree = SOURCE_ROOT; };
 		DA9A31D01EDC6ECD00B67414 /* runTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runTests.cpp; path = src/libs/functions/runTests.cpp; sourceTree = SOURCE_ROOT; };
@@ -93,6 +96,8 @@
 				DAF2E5851ED83AD60094BB72 /* IMinterpreter.hpp */,
 				DAF2E57E1ED6CAE20094BB72 /* IMlogfile.cpp */,
 				DAF2E57F1ED6CAE20094BB72 /* IMlogfile.hpp */,
+				DA68CD731FCDC2340004461E /* improvedAnalyticalModel_velocity.cpp */,
+				DA68CD741FCDC2340004461E /* improvedAnalyticalModel_velocity.hpp */,
 			);
 			path = IMtrajectoryModel;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 				DAF2E5861ED83AD60094BB72 /* IMinterpreter.cpp in Sources */,
 				DAE7F0971F1D130C00BACE8C /* main.cpp in Sources */,
 				DAF2E5891ED843450094BB72 /* IMmodel.cpp in Sources */,
+				DA68CD751FCDC2340004461E /* improvedAnalyticalModel_velocity.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,3 +28,7 @@ add_test(NAME IMTrajectoryModel_test_sl${number} COMMAND IMTrajectoryModel -sl .
 add_test(IMTrajectoryModel_test_sl${number}_Compare ${CMAKE_COMMAND} -E compare_files Testing/test_sl${number}.result
 ../test/simplifiedLogfile/test_sl${number}/test_sl${number}.result)
 endforeach()
+
+foreach(number 1)
+  add_test(NAME improvedAnalyticalModel${number} COMMAND IMTrajectoryModel -t improvedAnalyticalModel ${number})
+endforeach()

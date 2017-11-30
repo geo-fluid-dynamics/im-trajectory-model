@@ -1,3 +1,3 @@
-time px py pz tx ty tz nx ny nz distance
-0 0 0 0 0 0 -1 1 0 0 0
-144672 0 19.2 -0.000349515 0 4.99221e-06 1 0 -1 4.99221e-06 30.1592
+time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed
+0 0 0 0 0 0 -1 1 0 0 0 1 0 0
+144672 0 19.2 -0.000349515 0 4.99221e-06 1 0 -1 4.99221e-06 30.1592 1 0 -0

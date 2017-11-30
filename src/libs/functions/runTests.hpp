@@ -16,6 +16,7 @@
 #include "../classes/IMmodel.hpp"
 #include "../classes/IMtrajectory.hpp"
 #include "../classes/IMinputFileParser.hpp"
+#include "../functions/improvedAnalyticalModel_velocity.hpp"
 using namespace std;
 
 int testLogfileReading(string);

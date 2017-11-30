@@ -134,14 +134,16 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
         nOld[i]=this->n[oldPos][i];
     }
     
-    
     // check if r_cDirection has changed -> eventually we have to flip the normal
     if (this->r_cDirection[0] != r_cDirection[0] || this->r_cDirection[1] != r_cDirection[1]) {
+        
+        // if r_cDirection points in the opposite direction
         if ((this->r_cDirection[0] == -r_cDirection[0] && this->r_cDirection[1] == r_cDirection[1]) || (this->r_cDirection[0] == r_cDirection[0] && this->r_cDirection[1] == -r_cDirection[1])) {
             for (unsigned int k=0; k<3; k++) {
                 b[k]=-nOld[k];
             }
         }else
+            // if clockwise rotation
             if ((this->r_cDirection[0]==-1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==1) ||
                 (this->r_cDirection[0]==1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==-1) ||
                 (this->r_cDirection[0]==0 && r_cDirection[0]==-1 && this->r_cDirection[1]==-1 && r_cDirection[1]==0) ||
@@ -149,12 +151,11 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             b[0]=tOld[1]*nOld[2]-tOld[2]*nOld[1];
             b[1]=tOld[2]*nOld[0]-tOld[0]*nOld[2];
             b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
-            this->flag_r_c_direction_has_changed=1;
-        }else{
+                
+        }else{ // if counter-clockwise rotation
             b[0]=tOld[2]*nOld[1]-tOld[1]*nOld[2];
             b[1]=tOld[0]*nOld[2]-tOld[2]*nOld[0];
             b[2]=tOld[1]*nOld[0]-tOld[0]*nOld[1];
-            this->flag_r_c_direction_has_changed=0;
         }
 
             
@@ -250,11 +251,44 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             tOld[k]=tOld[k]/norm_t;
         }
     }
+
+    b[0]=tNew[1]*nNew[2]-tNew[2]*nNew[1];
+    b[1]=tNew[2]*nNew[0]-tNew[0]*nNew[2];
+    b[2]=tNew[0]*nNew[1]-tNew[1]*nNew[0];
     
     for (unsigned int i=0; i<3; i++) {
         this->p[newPos][i]=pNew[i];
         this->t[newPos][i]=tNew[i];
         this->n[newPos][i]=nNew[i];
+        
+    }
+    
+    // we use a little hack to calculate the fixed normal by evaluating the distances
+    double n_distance=sqrt(pow(this->n_fixed[newPos-1][0]-nNew[0],2)+pow(this->n_fixed[newPos-1][1]-nNew[1],2)+pow(this->n_fixed[newPos-1][2]-nNew[2],2));
+    
+    double nminus_distance=sqrt(pow(this->n_fixed[newPos-1][0]+nNew[0],2)+pow(this->n_fixed[newPos-1][1]+nNew[1],2)+pow(this->n_fixed[newPos-1][2]+nNew[2],2));
+    
+    double b_distance=sqrt(pow(this->n_fixed[newPos-1][0]-b[0],2)+pow(this->n_fixed[newPos-1][1]-b[1],2)+pow(this->n_fixed[newPos-1][2]-b[2],2));
+    
+    double bminus_distance=sqrt(pow(this->n_fixed[newPos-1][0]+b[0],2)+pow(this->n_fixed[newPos-1][1]+b[1],2)+pow(this->n_fixed[newPos-1][2]+b[2],2));
+    
+
+    if(n_distance<nminus_distance && n_distance<b_distance && n_distance<bminus_distance){
+        for (unsigned int i=0; i<3; i++) {
+            this->n_fixed[newPos][i]=this->n[newPos][i];
+        }
+    }else if(nminus_distance<n_distance && nminus_distance<b_distance && nminus_distance<bminus_distance){
+        for (unsigned int i=0; i<3; i++) {
+            this->n_fixed[newPos][i]=-this->n[newPos][i];
+        }
+    }else if(b_distance<n_distance && b_distance<nminus_distance && b_distance<bminus_distance){
+        for (unsigned int i=0; i<3; i++) {
+            this->n_fixed[newPos][i]=b[i];
+        }
+    }else if(bminus_distance<n_distance && bminus_distance<nminus_distance && bminus_distance<b_distance){
+        for (unsigned int i=0; i<3; i++) {
+            this->n_fixed[newPos][i]=-b[i];
+        }
     }
     
     this->pos++;
@@ -264,7 +298,7 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename.c_str());
     if (myfile.is_open())
     {
-        myfile << "time px py pz tx ty tz nx ny nz distance" << endl;
+        myfile << "time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed" << endl;
         for (unsigned int i=0; i<this->length; i++) {
             if (!this->flagCalcDistance) {
                 this->distance[i]=-1;
@@ -279,7 +313,10 @@ void IMtrajectory::writeToDisk(string filename){
                    << this->n[i][0] << " "
                    << this->n[i][1] << " "
                    << this->n[i][2] << " "
-                   << this->distance[i] << endl;
+                   << this->distance[i] << " "
+                   << this->n_fixed[i][0] << " "
+                   << this->n_fixed[i][1] << " "
+                   << this->n_fixed[i][2] << endl;
         }
         myfile.close();
     }
@@ -294,7 +331,6 @@ void IMtrajectory::reset(void){
 }
 
 void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length){
-    this->flag_r_c_direction_has_changed=0;
     
     this->length=length;
     
@@ -309,6 +345,7 @@ void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned 
     this->p = new double*[this->length];
     this->t = new double*[this->length];
     this->n = new double*[this->length];
+    this->n_fixed = new double*[this->length];
     
     this->r_cDirection_0[0]=1;
     this->r_cDirection_0[1]=0;
@@ -326,11 +363,13 @@ void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned 
         this->p[i] = new double[3];
         this->t[i] = new double[3];
         this->n[i] = new double[3];
+        this->n_fixed[i] = new double[3];
     }
     for (unsigned int i=0; i<3; i++) {
         this->p[0][i]=this->p_0[i];
         this->t[0][i]=this->t_0[i];
         this->n[0][i]=this->n_0[i];
+        this->n_fixed[0][i]=this->n_0[i];
     }
     this->pos=1;
 }

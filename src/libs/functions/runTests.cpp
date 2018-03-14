@@ -457,7 +457,7 @@ int runTests(string testName,int testNumber){
             case 1:
                 veloResult=improvedAnalyticalModel_velocity(F_H,P_H,rho_S,rho_L,c_p_S,c_p_L,mu_L,k_L,R,h_m,T_m,T_S,U_0_min,U_0_max,error);
                 //cout << veloResult*3600 << endl;
-                flag_notPassed=!(abs(veloResult*3600-0.6688)<0.0001);
+                flag_notPassed=!(abs(veloResult*3600-0.6657)<0.0001);
             default:
                 break;
         }

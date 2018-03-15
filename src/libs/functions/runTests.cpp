@@ -9,7 +9,7 @@
 #include "runTests.hpp"
 
 float isNearlyEqual(float a, float b){
-    return fabsf( a - b ) < 1e-8;
+    return fabsf( a - b ) < 1E-8;
 }
 
 int testerInfo(int condition,string moduleName,int testNumber){

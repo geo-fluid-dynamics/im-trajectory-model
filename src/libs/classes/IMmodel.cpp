@@ -21,6 +21,8 @@ IMmodel::IMmodel(){
     this->L=2;                      // length of the IceMole [m]
     this->H=0.15;                   // width of the IceMole [m]
     this->F_H=1000;                 // exerted force [N]
+    this->mass=0;
+    this->weight=0;
     this->straightMeltingModel=0;   // 0: simple energy balance
     this->curvilinearMeltingModel=0;// 0: simple energy balance
     this->r_cDirection[0]=1;
@@ -28,38 +30,27 @@ IMmodel::IMmodel(){
     this->tau=0;
     this->subSteps=0;
     this->temporalDiscretization=0;
+    this->subStepsRecalcVelocity=0;
     this->n_0[0]=1;
     this->n_0[1]=0;
     this->n_0[2]=0;
     this->t_0[0]=0;
     this->t_0[1]=0;
     this->t_0[2]=-1;
+    this->current_t_vector[0]=0;
+    this->current_t_vector[1]=0;
+    this->current_t_vector[2]=0;
     this->p_0[0]=0;
     this->p_0[1]=0;
     this->p_0[2]=0;
+    this->gravity_vector[0]=0;
+    this->gravity_vector[1]=0;
+    this->gravity_vector[2]=-1;
 }
 
 void IMmodel::solve(){
     
-    double R=this->H*sqrt(1.0/M_PI); // calculate R which has the same area than H*H
-    double U_0_min=0.00000001;
-    double U_0_max=0.1;
-    double error=0.00000000001;
-    
-    switch (this->straightMeltingModel) {
-        case 0:
-            this->U_0=this->P_H/(this->H * this->H * this->rho_S * (this->h_m + this->c_p_S * (this->T_m - this->T_S)));
-            break;
-        case 1: // improved analytical solution
-            if(this->P_H==0){
-                this->U_0=0;
-            }else{
-                this->U_0=improvedAnalyticalModel_velocity(this->F_H,this->P_H,this->rho_S,this->rho_L,this->c_p_S,this->c_p_L,this->mu_L,this->k_L,R,this->h_m,this->T_m,this->T_S,U_0_min,U_0_max,error);
-            }
-            break;
-        default:
-            break;
-    }
+    recalculateVecocity();
 
     switch (this->meltingMode) {
         case 1:
@@ -93,6 +84,37 @@ void IMmodel::solve(){
             }
             break;
             
+        default:
+            break;
+    }
+}
+
+void IMmodel::recalculateVecocity() {
+    
+    double R=this->H*sqrt(1.0/M_PI); // calculate R which has the same area than H*H
+    double U_0_min=0.00000001;
+    double U_0_max=0.1;
+    double error=0.00000000001;
+    
+    switch (this->straightMeltingModel) {
+        case 0:
+            this->U_0=this->P_H/(this->H * this->H * this->rho_S * (this->h_m + this->c_p_S * (this->T_m - this->T_S)));
+            break;
+        case 1: // improved analytical solution
+            if(this->P_H==0){
+                this->U_0=0;
+            }else{
+                
+                double gravity=sqrt(gravity_vector[0]*gravity_vector[0]+gravity_vector[1]*gravity_vector[1]+gravity_vector[2]*gravity_vector[2]);
+                // calculate the angle in rad between the gravity vector and the tangent
+                double phi=acos(current_t_vector[0]*gravity_vector[0]+current_t_vector[1]*gravity_vector[1]+current_t_vector[2]*gravity_vector[2]/(sqrt(current_t_vector[0]*current_t_vector[0]+current_t_vector[1]*current_t_vector[1]+current_t_vector[2]*current_t_vector[2])*gravity));
+                
+                
+                this->weight=this->mass*gravity*cos(phi);
+                
+                this->U_0=improvedAnalyticalModel_velocity(this->F_H+this->weight,this->P_H,this->rho_S,this->rho_L,this->c_p_S,this->c_p_L,this->mu_L,this->k_L,R,this->h_m,this->T_m,this->T_S,U_0_min,U_0_max,error);
+            }
+            break;
         default:
             break;
     }

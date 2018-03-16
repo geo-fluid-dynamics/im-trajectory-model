@@ -34,9 +34,14 @@ void IMinputFileParser::setAllflagsToFalse(void){
     this->flag_subSteps=0;
     this->flag_r_cStraight=0;
     this->flag_temporalDiscretization=0;
+    this->subStepsRecalcVelocity=0;
     this->flag_straightMeltingModel=0;
     this->flag_F_H=0;
+    this->flag_mass=0;
     this->flag_mu_L=0;
+    this->flag_gravity_vector=0;
+    this->flag_n_0=0;
+    this->flag_t_0=0;
 }
 
 IMinputFileParser::IMinputFileParser(string filename){
@@ -155,12 +160,18 @@ IMinputFileParser::IMinputFileParser(string filename){
                     }else if (!keyword.compare("temporalDiscretization")){
                         this->temporalDiscretization=value;
                         this->flag_temporalDiscretization=1;
+                    }else if (!keyword.compare("subStepsRecalcVelocity")){
+                        this->subStepsRecalcVelocity=value;
+                        this->flag_subStepsRecalcVelocity=1;
                     }else if (!keyword.compare("straightMeltingModel")){
                         this->straightMeltingModel=value;
                         this->flag_straightMeltingModel=1;
                     }else if (!keyword.compare("F_H")){
                         this->F_H=value;
                         this->flag_F_H=1;
+                    }else if (!keyword.compare("mass")){
+                        this->mass=value;
+                        this->flag_mass=1;
                     }else if (!keyword.compare("mu_L")){
                         this->mu_L=value;
                         this->flag_mu_L=1;
@@ -176,6 +187,12 @@ IMinputFileParser::IMinputFileParser(string filename){
                         this->n_0[1]=atof(sep[1].c_str());
                         this->n_0[2]=atof(sep[2].c_str());
                         this->flag_n_0=1;
+                    }else if (!keyword.compare("gravity_vector")){
+                        vector<string> sep = split(valueStr, ',');
+                        this->gravity_vector[0]=atof(sep[0].c_str());
+                        this->gravity_vector[1]=atof(sep[1].c_str());
+                        this->gravity_vector[2]=atof(sep[2].c_str());
+                        this->flag_gravity_vector=1;
                     }else{
                         std::cerr << keyword << " is not a valid keyword." << std::endl;
                         continue;
@@ -212,8 +229,10 @@ void IMinputFileParser::parseToModel(IMmodel& im_model){
     useDataFromInputFile(this->flag_subSteps, &this->subSteps, &im_model.subSteps,inputFileName,"subSteps");
     useDataFromInputFile(this->flag_r_cStraight, &this->r_cStraight, &im_model.r_cStraight,inputFileName,"r_cStraight");
     useDataFromInputFile(this->flag_temporalDiscretization, &this->temporalDiscretization, &im_model.temporalDiscretization,inputFileName,"temporalDiscretization");
+    useDataFromInputFile(this->flag_subStepsRecalcVelocity, &this->subStepsRecalcVelocity, &im_model.subStepsRecalcVelocity,inputFileName,"subStepsRecalcVelocity");
     useDataFromInputFile(this->flag_straightMeltingModel, &this->straightMeltingModel, &im_model.straightMeltingModel,inputFileName,"straightMeltingModel");
     useDataFromInputFile(this->flag_F_H, &this->F_H, &im_model.F_H,inputFileName,"F_H");
+    useDataFromInputFile(this->flag_mass, &this->mass, &im_model.mass,inputFileName,"mass");
     useDataFromInputFile(this->flag_mu_L, &this->mu_L, &im_model.mu_L,inputFileName,"mu_L");
     
     if (this->flag_t_0) {
@@ -229,6 +248,13 @@ void IMinputFileParser::parseToModel(IMmodel& im_model){
         im_model.n_0[2]=this->n_0[2];
     }else{
         cout << "WARNING: n_0 was not found in " << inputFileName << ". Using the default values " << this->n_0[0] << "," << this->n_0[1] << "," << this->n_0[2] << " instead." << endl;
+    }
+    if (this->flag_gravity_vector) {
+        im_model.gravity_vector[0]=this->gravity_vector[0];
+        im_model.gravity_vector[1]=this->gravity_vector[1];
+        im_model.gravity_vector[2]=this->gravity_vector[2];
+    }else{
+        cout << "WARNING: gravity_vector was not found in " << inputFileName << ". Using the default values " << this->gravity_vector[0] << "," << this->gravity_vector[1] << "," << this->gravity_vector[2] << " instead." << endl;
     }
     
     // make sure that we are using unit vectors

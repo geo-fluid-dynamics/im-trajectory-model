@@ -94,13 +94,13 @@ void LUevaluate(double l[9][9], double u[9][9], double b[9], double x[9]){
     }
 }
 
-IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,unsigned int length){
+IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,unsigned int length, double* gravity_vector){
     this->subSteps=0;
     this->temporalDiscretization=0; // forward euler
-    IMtrajectory::reinitialize(p_0, t_0, n_0, length);
+    IMtrajectory::reinitialize(p_0, t_0, n_0, length, gravity_vector);
 }
 
-void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_cDirection){
+void IMtrajectory::add(double dt,IMmodel* myIMmodel){
     unsigned int newPos=this->pos;
     unsigned int oldPos=newPos-1;
     
@@ -118,12 +118,18 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     double x[9]={0};
     double rhs[9]={0};
     double epsilon=0;
+    double phi;         // angle between t and gravity
     
     double norm_t;
     double norm_n;
     
-    
     double dtSub=dt/(this->subSteps+1);
+    
+    double U_0=myIMmodel->U_0;
+    double r_c=myIMmodel->r_c;
+    double tau=myIMmodel->tau;
+    double *r_cDirection=myIMmodel->r_cDirection;
+    
     this->times[newPos]=this->times[oldPos]+dt;
     
     this->distance[newPos]=this->distance[oldPos];
@@ -174,6 +180,13 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
         b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
         
         for (unsigned int k=0; k<3; k++) {
+            
+            //cout << myIMmodel->U_0 << endl;
+            
+            if (myIMmodel->subStepsRecalcVelocity) {
+                myIMmodel->recalculateVecocity();
+            }
+            
             if(this->temporalDiscretization==0){ // forward euler
                 pNew[k]=pOld[k] + dtSub * U_0 * tOld[k];
                 tNew[k]=tOld[k] + dtSub * U_0/r_c * nOld[k];
@@ -330,7 +343,7 @@ void IMtrajectory::reset(void){
     }
 }
 
-void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length){
+void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length, double* gravity_vector){
     
     this->length=length;
     
@@ -357,6 +370,7 @@ void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned 
         this->p_0[i]=p_0[i];
         this->t_0[i]=t_0[i];
         this->n_0[i]=n_0[i];
+        this->gravity_vector[i]=gravity_vector[i];
     }
     
     for(unsigned int i = 0; i < this->length; i++){

@@ -147,7 +147,7 @@ int main(int argc, const char * argv[]) {
         double r_cDirection[2];
         r_cDirection[0]=1;
         r_cDirection[1]=0;
-        IMtrajectory trajectory(myIMmodel.p_0,myIMmodel.t_0,myIMmodel.n_0,A.numberOfDataLines);
+        IMtrajectory trajectory(myIMmodel.p_0,myIMmodel.t_0,myIMmodel.n_0,A.numberOfDataLines,myIMmodel.gravity_vector);
         trajectory.temporalDiscretization=myIMmodel.temporalDiscretization;
         trajectory.subSteps=myIMmodel.subSteps;
         trajectory.flagCalcDistance=flagCalcDistance;
@@ -158,6 +158,9 @@ int main(int argc, const char * argv[]) {
             // parse the power values and calculate the melting velocity and curve radius
             myIMmodel.P_W=P_W;
             myIMmodel.P_H=P_H;
+            myIMmodel.current_t_vector[0]=trajectory.t[i][0];
+            myIMmodel.current_t_vector[1]=trajectory.t[i][1];
+            myIMmodel.current_t_vector[2]=trajectory.t[i][2];
             
             myIMmodel.solve();
             
@@ -168,7 +171,7 @@ int main(int argc, const char * argv[]) {
                 trajectory.subSteps=myIMmodel.subSteps;
             }
             
-            trajectory.add(A.timeInSeconds[i+1]-A.timeInSeconds[i],myIMmodel.U_0,myIMmodel.r_c,myIMmodel.tau,myIMmodel.r_cDirection);
+            trajectory.add(A.timeInSeconds[i+1]-A.timeInSeconds[i],&myIMmodel);
             
         }
     

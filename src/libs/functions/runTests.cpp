@@ -89,7 +89,7 @@ int runTests(string testName,int testNumber){
             {
                 bool testHeaterStates[24]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1};
                 mMode=IMinterpreter(testHeaterStates, &P_H, &P_W);
-                return !(mMode==-1 && isNearlyEqual( P_H, 0.0) && isNearlyEqual( P_W, 0.0));
+                flag_notPassed=!(mMode==-1 && isNearlyEqual( P_H, 0.0) && isNearlyEqual( P_W, 0.0));
                 break;
             }
             case 4:
@@ -205,7 +205,13 @@ int runTests(string testName,int testNumber){
         double t_0[3]={0,0,-1};
         double n_0[3]={1,0,0};
         double r_cDirection[2]={1,0};
-        IMtrajectory trajectory(p_0,t_0,n_0,5);
+        testIMmodel.r_cDirection[0]=r_cDirection[0];
+        testIMmodel.r_cDirection[1]=r_cDirection[1];
+        testIMmodel.U_0=0.1;
+        testIMmodel.r_c=100000;
+        testIMmodel.tau=0;
+        double gravity_vector[3]={0,0,-1};
+        IMtrajectory trajectory(p_0,t_0,n_0,5,gravity_vector);
         const double PI = std::atan(1.0)*4;
         double r_c=1.0;
         
@@ -213,7 +219,7 @@ int runTests(string testName,int testNumber){
             case 1:
             {
                 trajectory.subSteps=0;
-                trajectory.add(10.,0.1,100000,0,r_cDirection);
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(isNearlyEqual(trajectory.p[1][0],0) && isNearlyEqual(trajectory.p[1][1],0) && isNearlyEqual(trajectory.p[1][2],-1));
                 break;
@@ -221,7 +227,7 @@ int runTests(string testName,int testNumber){
             case 2:
             {
                 trajectory.subSteps=100;
-                trajectory.add(10.,0.1,100000,0,r_cDirection);
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(trajectory.p[1][0]<4.9506e-6 && trajectory.p[1][1]==0 && abs(trajectory.p[1][2]-(-1))<1e-6);
                 break;
@@ -230,7 +236,7 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=1;
                 trajectory.subSteps=100;
-                trajectory.add(10.,0.1,100000,0,r_cDirection);
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(trajectory.p[1][0]<5.1496e-6 && trajectory.p[1][1]==0 && abs(trajectory.p[1][2]-(-1))<1e-6);
                 break;
@@ -239,7 +245,10 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+
+                trajectory.add(10.,&testIMmodel);
                 ///trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[1][0]-1.0)<0.01 && abs(trajectory.p[1][1]-0.0)<0.01 && abs(trajectory.p[1][2]-(-1.0))<0.01);
                 break;
@@ -248,7 +257,10 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=1;
                 trajectory.subSteps=1000;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[1][0]-1.0)<0.01 && abs(trajectory.p[1][1]-0.0)<0.01 && abs(trajectory.p[1][2]-(-1.0))<0.01);
                 break;
@@ -257,9 +269,12 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[1][1]-0.0)<0.01 && abs(trajectory.p[1][0]-(-1.0))<0.01 && abs(trajectory.p[1][2]-(-1.0))<0.01);
                 break;
@@ -268,12 +283,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-1.0)<0.01 && abs(trajectory.p[2][0]-(-2.0))<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -282,12 +300,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=-1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=-1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-1.0))<0.01 && abs(trajectory.p[2][0]-(-2.0))<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -296,12 +317,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-1.0)<0.01 && abs(trajectory.p[2][0]-2.0)<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -310,12 +334,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=-1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=-1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-1.0))<0.01 && abs(trajectory.p[2][0]-2.0)<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -324,12 +351,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=0;
-                r_cDirection[1]=-1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=-1;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-2.0))<0.01 && abs(trajectory.p[2][0]-1.0)<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -338,12 +368,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=0;
-                r_cDirection[1]=-1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=-1;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-2.0))<0.01 && abs(trajectory.p[2][0]-(-1.0))<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -352,12 +385,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-2.0)<0.01 && abs(trajectory.p[2][0]-1.0)<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -366,12 +402,15 @@ int runTests(string testName,int testNumber){
             {
                 trajectory.temporalDiscretization=0;
                 trajectory.subSteps=1000;
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-2.0)<0.01 && abs(trajectory.p[2][0]-(-1.0))<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -382,13 +421,16 @@ int runTests(string testName,int testNumber){
                 n_0[0]=-1;
                 n_0[1]=0;
                 n_0[2]=0;
-                trajectory.reinitialize(p_0, t_0, n_0, 3);
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                trajectory.reinitialize(p_0, t_0, n_0, 3,gravity_vector);
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-1.0))<0.01 && abs(trajectory.p[2][0]-2.0)<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -399,13 +441,16 @@ int runTests(string testName,int testNumber){
                 n_0[0]=0;
                 n_0[1]=1;
                 n_0[2]=0;
-                trajectory.reinitialize(p_0, t_0, n_0, 3);
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                trajectory.reinitialize(p_0, t_0, n_0, 3,gravity_vector);
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
                 //trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-(-2.0))<0.01 && abs(trajectory.p[2][0]-(-1.0))<0.01 && abs(trajectory.p[2][2]-(-1.0))<0.01);
                 break;
@@ -419,13 +464,16 @@ int runTests(string testName,int testNumber){
                 n_0[0]=0;
                 n_0[1]=0;
                 n_0[2]=1;
-                trajectory.reinitialize(p_0, t_0, n_0, 3);
-                r_cDirection[0]=-1;
-                r_cDirection[1]=0;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
-                r_cDirection[0]=0;
-                r_cDirection[1]=1;
-                trajectory.add(10.,PI/2*r_c/10.0,r_c,0,r_cDirection);
+                testIMmodel.U_0=PI/2*r_c/10.0;
+                testIMmodel.r_c=r_c;
+                
+                trajectory.reinitialize(p_0, t_0, n_0, 3,gravity_vector);
+                testIMmodel.r_cDirection[0]=-1;
+                testIMmodel.r_cDirection[1]=0;
+                trajectory.add(10.,&testIMmodel);
+                testIMmodel.r_cDirection[0]=0;
+                testIMmodel.r_cDirection[1]=1;
+                trajectory.add(10.,&testIMmodel);
                 trajectory.print();
                 flag_notPassed=!(abs(trajectory.p[2][1]-1.0)<0.01 && abs(trajectory.p[2][0]-1.0)<0.01 && abs(trajectory.p[2][2]-(-2.0))<0.01);
                 break;

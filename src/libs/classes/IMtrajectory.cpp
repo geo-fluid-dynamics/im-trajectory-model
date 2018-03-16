@@ -118,7 +118,6 @@ void IMtrajectory::add(double dt,IMmodel* myIMmodel){
     double x[9]={0};
     double rhs[9]={0};
     double epsilon=0;
-    double phi;         // angle between t and gravity
     
     double norm_t;
     double norm_n;

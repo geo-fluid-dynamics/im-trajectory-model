@@ -94,13 +94,13 @@ void LUevaluate(double l[9][9], double u[9][9], double b[9], double x[9]){
     }
 }
 
-IMtrajectory::IMtrajectory(double* p_0, double* t_0, double* n_0,unsigned int length){
-    this->subSteps=0;
-    this->temporalDiscretization=0; // forward euler
-    IMtrajectory::reinitialize(p_0, t_0, n_0, length);
+IMtrajectory::IMtrajectory(IMmodel* myIMmodel,unsigned int length){
+    subSteps=0;
+    temporalDiscretization=0; // forward euler
+    IMtrajectory::reinitialize(myIMmodel, length);
 }
 
-void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_cDirection){
+void IMtrajectory::add(double dt,IMmodel* myIMmodel){
     unsigned int newPos=this->pos;
     unsigned int oldPos=newPos-1;
     
@@ -122,32 +122,39 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     double norm_t;
     double norm_n;
     
+    double dtSub=dt/(subSteps+1);
     
-    double dtSub=dt/(this->subSteps+1);
-    this->times[newPos]=this->times[oldPos]+dt;
+    double U_0=myIMmodel->U_0;
+    double r_c=myIMmodel->r_c;
+    double tau=myIMmodel->tau;
+    double *r_cDirectionIn=myIMmodel->r_cDirection;
     
-    this->distance[newPos]=this->distance[oldPos];
+    times[newPos]=times[oldPos]+dt;
+    
+    distance[newPos]=distance[oldPos];
+    
+    meltingVelocities[newPos]=meltingVelocities[oldPos];
     
     for (unsigned int i=0; i<3; i++) {
-        pOld[i]=this->p[oldPos][i];
-        tOld[i]=this->t[oldPos][i];
-        nOld[i]=this->n[oldPos][i];
+        pOld[i]=p[oldPos][i];
+        tOld[i]=t[oldPos][i];
+        nOld[i]=n[oldPos][i];
     }
     
     // check if r_cDirection has changed -> eventually we have to flip the normal
-    if (this->r_cDirection[0] != r_cDirection[0] || this->r_cDirection[1] != r_cDirection[1]) {
+    if (r_cDirection[0] != r_cDirectionIn[0] || r_cDirection[1] != r_cDirectionIn[1]) {
         
         // if r_cDirection points in the opposite direction
-        if ((this->r_cDirection[0] == -r_cDirection[0] && this->r_cDirection[1] == r_cDirection[1]) || (this->r_cDirection[0] == r_cDirection[0] && this->r_cDirection[1] == -r_cDirection[1])) {
+        if ((r_cDirection[0] == -r_cDirectionIn[0] && r_cDirection[1] == r_cDirectionIn[1]) || (r_cDirection[0] == r_cDirectionIn[0] && r_cDirection[1] == -r_cDirectionIn[1])) {
             for (unsigned int k=0; k<3; k++) {
                 b[k]=-nOld[k];
             }
         }else
             // if clockwise rotation
-            if ((this->r_cDirection[0]==-1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==1) ||
-                (this->r_cDirection[0]==1 && r_cDirection[0]==0 && this->r_cDirection[1]==0 && r_cDirection[1]==-1) ||
-                (this->r_cDirection[0]==0 && r_cDirection[0]==-1 && this->r_cDirection[1]==-1 && r_cDirection[1]==0) ||
-                (this->r_cDirection[0]==0 && r_cDirection[0]==1 && this->r_cDirection[1]==1 && r_cDirection[1]==0)) {
+            if ((r_cDirection[0]==-1 && r_cDirectionIn[0]==0 && r_cDirection[1]==0 && r_cDirectionIn[1]==1) ||
+                (r_cDirection[0]==1 && r_cDirectionIn[0]==0 && r_cDirection[1]==0 && r_cDirectionIn[1]==-1) ||
+                (r_cDirection[0]==0 && r_cDirectionIn[0]==-1 && r_cDirection[1]==-1 && r_cDirectionIn[1]==0) ||
+                (r_cDirection[0]==0 && r_cDirectionIn[0]==1 && r_cDirection[1]==1 && r_cDirectionIn[1]==0)) {
             b[0]=tOld[1]*nOld[2]-tOld[2]*nOld[1];
             b[1]=tOld[2]*nOld[0]-tOld[0]*nOld[2];
             b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
@@ -163,22 +170,29 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             nOld[k]=b[k];
         }
         // save the new direction for the next add
-        this->r_cDirection[0]=r_cDirection[0];
-        this->r_cDirection[1]=r_cDirection[1];
+        r_cDirection[0]=r_cDirectionIn[0];
+        r_cDirection[1]=r_cDirectionIn[1];
     }
     
-    for (unsigned int i=0; i<this->subSteps+1; i++) {
+    for (unsigned int i=0; i<subSteps+1; i++) {
         
         b[0]=tOld[1]*nOld[2]-tOld[2]*nOld[1];
         b[1]=tOld[2]*nOld[0]-tOld[0]*nOld[2];
         b[2]=tOld[0]*nOld[1]-tOld[1]*nOld[0];
         
         for (unsigned int k=0; k<3; k++) {
-            if(this->temporalDiscretization==0){ // forward euler
+            
+            //cout << myIMmodel->U_0 << endl;
+            
+            if (myIMmodel->subStepsRecalcVelocity) {
+                myIMmodel->recalculateVecocity();
+            }
+            
+            if(temporalDiscretization==0){ // forward euler
                 pNew[k]=pOld[k] + dtSub * U_0 * tOld[k];
                 tNew[k]=tOld[k] + dtSub * U_0/r_c * nOld[k];
                 nNew[k]=nOld[k] + dtSub * U_0 * ( tau * b[k] - tOld[k]/r_c);
-            }else if(this->temporalDiscretization==1){ // implicit euler
+            }else if(temporalDiscretization==1){ // implicit euler
                 for(unsigned int m=0;m<9;m++){
                     A[m][m]=1;
                 }
@@ -236,8 +250,10 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
             
         }
         if (flagCalcDistance) {
-            this->distance[newPos]=this->distance[newPos]+sqrt(pow(pNew[0]-pOld[0],2)+pow(pNew[1]-pOld[1],2)+pow(pNew[2]-pOld[2],2));
+            distance[newPos]=distance[newPos]+sqrt(pow(pNew[0]-pOld[0],2)+pow(pNew[1]-pOld[1],2)+pow(pNew[2]-pOld[2],2));
         }
+        
+        meltingVelocities[newPos]=myIMmodel->U_0*3600;
         
         for (unsigned int k=0; k<3; k++) {
             pOld[k]=pNew[k];
@@ -257,37 +273,37 @@ void IMtrajectory::add(double dt,double U_0, double r_c, double tau, double* r_c
     b[2]=tNew[0]*nNew[1]-tNew[1]*nNew[0];
     
     for (unsigned int i=0; i<3; i++) {
-        this->p[newPos][i]=pNew[i];
-        this->t[newPos][i]=tNew[i];
-        this->n[newPos][i]=nNew[i];
+        p[newPos][i]=pNew[i];
+        t[newPos][i]=tNew[i];
+        n[newPos][i]=nNew[i];
         
     }
     
     // we use a little hack to calculate the fixed normal by evaluating the distances
-    double n_distance=sqrt(pow(this->n_fixed[newPos-1][0]-nNew[0],2)+pow(this->n_fixed[newPos-1][1]-nNew[1],2)+pow(this->n_fixed[newPos-1][2]-nNew[2],2));
+    double n_distance=sqrt(pow(n_fixed[newPos-1][0]-nNew[0],2)+pow(n_fixed[newPos-1][1]-nNew[1],2)+pow(n_fixed[newPos-1][2]-nNew[2],2));
     
-    double nminus_distance=sqrt(pow(this->n_fixed[newPos-1][0]+nNew[0],2)+pow(this->n_fixed[newPos-1][1]+nNew[1],2)+pow(this->n_fixed[newPos-1][2]+nNew[2],2));
+    double nminus_distance=sqrt(pow(n_fixed[newPos-1][0]+nNew[0],2)+pow(n_fixed[newPos-1][1]+nNew[1],2)+pow(n_fixed[newPos-1][2]+nNew[2],2));
     
-    double b_distance=sqrt(pow(this->n_fixed[newPos-1][0]-b[0],2)+pow(this->n_fixed[newPos-1][1]-b[1],2)+pow(this->n_fixed[newPos-1][2]-b[2],2));
+    double b_distance=sqrt(pow(n_fixed[newPos-1][0]-b[0],2)+pow(n_fixed[newPos-1][1]-b[1],2)+pow(n_fixed[newPos-1][2]-b[2],2));
     
-    double bminus_distance=sqrt(pow(this->n_fixed[newPos-1][0]+b[0],2)+pow(this->n_fixed[newPos-1][1]+b[1],2)+pow(this->n_fixed[newPos-1][2]+b[2],2));
+    double bminus_distance=sqrt(pow(n_fixed[newPos-1][0]+b[0],2)+pow(n_fixed[newPos-1][1]+b[1],2)+pow(n_fixed[newPos-1][2]+b[2],2));
     
 
     if(n_distance<nminus_distance && n_distance<b_distance && n_distance<bminus_distance){
         for (unsigned int i=0; i<3; i++) {
-            this->n_fixed[newPos][i]=this->n[newPos][i];
+            n_fixed[newPos][i]=n[newPos][i];
         }
     }else if(nminus_distance<n_distance && nminus_distance<b_distance && nminus_distance<bminus_distance){
         for (unsigned int i=0; i<3; i++) {
-            this->n_fixed[newPos][i]=-this->n[newPos][i];
+            n_fixed[newPos][i]=-n[newPos][i];
         }
     }else if(b_distance<n_distance && b_distance<nminus_distance && b_distance<bminus_distance){
         for (unsigned int i=0; i<3; i++) {
-            this->n_fixed[newPos][i]=b[i];
+            n_fixed[newPos][i]=b[i];
         }
     }else if(bminus_distance<n_distance && bminus_distance<nminus_distance && bminus_distance<b_distance){
         for (unsigned int i=0; i<3; i++) {
-            this->n_fixed[newPos][i]=-b[i];
+            n_fixed[newPos][i]=-b[i];
         }
     }
     
@@ -298,25 +314,26 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename.c_str());
     if (myfile.is_open())
     {
-        myfile << "time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed" << endl;
-        for (unsigned int i=0; i<this->length; i++) {
-            if (!this->flagCalcDistance) {
-                this->distance[i]=-1;
+        myfile << "time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed U_0" << endl;
+        for (unsigned int i=0; i<length; i++) {
+            if (!flagCalcDistance) {
+                distance[i]=-1;
             }
-            myfile << this->times[i] << " "
-                   << this->p[i][0] << " "
-                   << this->p[i][1] << " "
-                   << this->p[i][2] << " "
-                   << this->t[i][0] << " "
-                   << this->t[i][1] << " "
-                   << this->t[i][2] << " "
-                   << this->n[i][0] << " "
-                   << this->n[i][1] << " "
-                   << this->n[i][2] << " "
-                   << this->distance[i] << " "
-                   << this->n_fixed[i][0] << " "
-                   << this->n_fixed[i][1] << " "
-                   << this->n_fixed[i][2] << endl;
+            myfile << times[i] << " "
+                   << p[i][0] << " "
+                   << p[i][1] << " "
+                   << p[i][2] << " "
+                   << t[i][0] << " "
+                   << t[i][1] << " "
+                   << t[i][2] << " "
+                   << n[i][0] << " "
+                   << n[i][1] << " "
+                   << n[i][2] << " "
+                   << distance[i] << " "
+                   << n_fixed[i][0] << " "
+                   << n_fixed[i][1] << " "
+                   << n_fixed[i][2] << " "
+                   << meltingVelocities[i] << endl;
         }
         myfile.close();
     }
@@ -324,58 +341,78 @@ void IMtrajectory::writeToDisk(string filename){
 }
 
 void IMtrajectory::reset(void){
-    this->pos=1;
+    pos=1;
     for (unsigned int i=0; i<3; i++) {
-        this->r_cDirection[i]=this->r_cDirection_0[i];
+        r_cDirection[i]=r_cDirection_0[i];
     }
 }
 
-void IMtrajectory::reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length){
+void IMtrajectory::reinitialize(IMmodel* myIMmodel, unsigned int lengthIn){
     
-    this->length=length;
+    length=lengthIn;
     
-    this->times = new double[this->length];
-    this->times[0]=0;
+    times = new double[length];
+    times[0]=0;
     
-    this->distance = new double[this->length];
-    this->distance[0]=0;
-    this->flagCalcDistance=true;
+    distance = new double[length];
+    distance[0]=0;
+    flagCalcDistance=true;
     
+    meltingVelocities = new double[length];
+    meltingVelocities[0]=0;
     
-    this->p = new double*[this->length];
-    this->t = new double*[this->length];
-    this->n = new double*[this->length];
-    this->n_fixed = new double*[this->length];
+    p = new double*[length];
+    t = new double*[length];
+    n = new double*[length];
+    n_fixed = new double*[length];
     
-    this->r_cDirection_0[0]=1;
-    this->r_cDirection_0[1]=0;
+    r_cDirection_0[0]=1;
+    r_cDirection_0[1]=0;
     for (unsigned int i=0; i<2; i++) {
-        this->r_cDirection[i]=this->r_cDirection_0[i];
+        r_cDirection[i]=r_cDirection_0[i];
     }
     
     for (unsigned int i=0; i<3; i++) {
-        this->p_0[i]=p_0[i];
-        this->t_0[i]=t_0[i];
-        this->n_0[i]=n_0[i];
+        p_0[i]=myIMmodel->p_0[i];
+        t_0[i]=myIMmodel->t_0[i];
+        n_0[i]=myIMmodel->n_0[i];
+        gravity_vector[i]=myIMmodel->gravity_vector[i];
     }
     
-    for(unsigned int i = 0; i < this->length; i++){
-        this->p[i] = new double[3];
-        this->t[i] = new double[3];
-        this->n[i] = new double[3];
-        this->n_fixed[i] = new double[3];
+    for(unsigned int i = 0; i < length; i++){
+        p[i] = new double[3];
+        t[i] = new double[3];
+        n[i] = new double[3];
+        n_fixed[i] = new double[3];
     }
     for (unsigned int i=0; i<3; i++) {
-        this->p[0][i]=this->p_0[i];
-        this->t[0][i]=this->t_0[i];
-        this->n[0][i]=this->n_0[i];
-        this->n_fixed[0][i]=this->n_0[i];
+        p[0][i]=p_0[i];
+        t[0][i]=t_0[i];
+        n[0][i]=n_0[i];
+        n_fixed[0][i]=n_0[i];
     }
     this->pos=1;
 }
 
 void IMtrajectory::print(void){
-    for (unsigned int i=0; i<this->length; i++) {
+    for (unsigned int i=0; i<length; i++) {
         printf("p[%i] = {%.5f,%.5f,%.5f},\t t[%i] = {%.5f,%.5f,%.5f},\t n[%i] = {%.5f,%.5f,%.5f}\n",i,p[i][0],p[i][1],p[i][2],i,t[i][0],t[i][1],t[i][2],i,n[i][0],n[i][1],n[i][2]);
     }
+}
+
+IMtrajectory::~IMtrajectory(){
+    for(unsigned int i = 0; i < length; i++){
+        delete [] p[i];
+        delete [] t[i];
+        delete [] n[i];
+        delete [] n_fixed[i];
+    }
+    
+    delete [] p;
+    delete [] t;
+    delete [] n;
+    delete [] n_fixed;
+    delete [] times;
+    delete [] distance;
+    delete [] meltingVelocities;
 }

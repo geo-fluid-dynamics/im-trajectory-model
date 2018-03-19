@@ -14,7 +14,7 @@
 using namespace std;
 
 class IMmodel {
-
+    
 public:
     double rho_S;                   // solid PCM density [kg/m^3]
     double rho_L;                   // liquid PCM density [kg/m^3]
@@ -30,7 +30,9 @@ public:
     float P_W;                      // active wall power [W]
     float U_0;                      // melting velocity [m/s]
     double F_H;                     // total exerted force (e.g. weight minus buoyancy force) [N]
-    double r_cDirection[3];         // curve radius direction [-]
+    double mass;
+    double weight;
+    double r_cDirection[2];         // curve radius direction [-]
     double r_c;                     // curve radius value [m]
     double r_cStraight;             // curve radius which is used to mimic straight melting [m]
     double L;                       // length of the IceMole [m]
@@ -41,11 +43,15 @@ public:
     double p_0[3];                  // initial position vector
     double t_0[3];                  // initial tangent vector
     double n_0[3];                  // initial normal vector
+    double current_t_vector[3];
+    double gravity_vector[3];
     double tau;
     int subSteps;
     int temporalDiscretization;
+    int subStepsRecalcVelocity;
     IMmodel();
     void solve();
+    void recalculateVecocity();
 };
 
 #endif /* IMmodel_hpp */

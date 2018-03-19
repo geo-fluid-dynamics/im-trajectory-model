@@ -58,16 +58,22 @@ public:
     bool flag_t_0;
     double n_0[3];              // initial normal
     bool flag_n_0;
+    double gravity_vector[3];
+    bool flag_gravity_vector;
     int subSteps;
     bool flag_subSteps;
     double r_cStraight;
     bool flag_r_cStraight;
     int temporalDiscretization;
     bool flag_temporalDiscretization;
+    int subStepsRecalcVelocity;
+    bool flag_subStepsRecalcVelocity;
     int straightMeltingModel;
     bool flag_straightMeltingModel;
     double F_H;                 // exerted force [N]
     bool flag_F_H;
+    double mass;
+    bool flag_mass;
     double mu_L;                // dynamic viscosity [Ns/(m^2)]
     bool flag_mu_L;
     

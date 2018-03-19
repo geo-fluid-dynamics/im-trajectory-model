@@ -14,10 +14,15 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include "../classes/IMmodel.hpp"
+
 using namespace std;
 
 class IMtrajectory {
     unsigned int pos;
+    
+private:
+    
     
 public:
     double p_0[3];              // initial position in x-, y- and z-direction
@@ -29,6 +34,7 @@ public:
     double** n_fixed;           // fixed normals for all times
     double* times;              // time points (starts at 0)
     double* distance;           // total moltmen distance (starts at 0)
+    double* meltingVelocities;  // melting velocities
     bool flagCalcDistance;      // if flag is zero than the distance will not be calculated
                                 // in the output in distance column, all values will be set to -1
     unsigned int length;        // the length positions
@@ -36,13 +42,15 @@ public:
     int temporalDiscretization; // 0: forward; 1: backward
     double r_cDirection_0[2];   // initial direction of curve radius
     double r_cDirection[2];     // last r_cDirection
+    double gravity_vector[3];
     
-    IMtrajectory(double* p_0, double* t_0, double* n_0, unsigned int length);
-    void add(double,double,double,double,double*);
+    IMtrajectory(IMmodel*, unsigned int length);
+    void add(double,IMmodel*);
     void writeToDisk(string);   //!< writes the solution to disk
     void reset(void);
-    void reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length);
+    void reinitialize(IMmodel*, unsigned int length);
     void print(void);
+    ~IMtrajectory();
 };
 
 #endif /* IMtrajectory_hpp */

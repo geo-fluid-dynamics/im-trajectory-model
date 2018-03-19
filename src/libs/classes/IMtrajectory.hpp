@@ -34,6 +34,7 @@ public:
     double** n_fixed;           // fixed normals for all times
     double* times;              // time points (starts at 0)
     double* distance;           // total moltmen distance (starts at 0)
+    double* meltingVelocities;  // melting velocities
     bool flagCalcDistance;      // if flag is zero than the distance will not be calculated
                                 // in the output in distance column, all values will be set to -1
     unsigned int length;        // the length positions

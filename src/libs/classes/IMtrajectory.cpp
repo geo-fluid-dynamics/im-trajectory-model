@@ -133,6 +133,8 @@ void IMtrajectory::add(double dt,IMmodel* myIMmodel){
     
     distance[newPos]=distance[oldPos];
     
+    meltingVelocities[newPos]=meltingVelocities[oldPos];
+    
     for (unsigned int i=0; i<3; i++) {
         pOld[i]=p[oldPos][i];
         tOld[i]=t[oldPos][i];
@@ -251,6 +253,8 @@ void IMtrajectory::add(double dt,IMmodel* myIMmodel){
             distance[newPos]=distance[newPos]+sqrt(pow(pNew[0]-pOld[0],2)+pow(pNew[1]-pOld[1],2)+pow(pNew[2]-pOld[2],2));
         }
         
+        meltingVelocities[newPos]=myIMmodel->U_0*3600;
+        
         for (unsigned int k=0; k<3; k++) {
             pOld[k]=pNew[k];
             tOld[k]=tNew[k];
@@ -310,7 +314,7 @@ void IMtrajectory::writeToDisk(string filename){
     ofstream myfile (filename.c_str());
     if (myfile.is_open())
     {
-        myfile << "time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed" << endl;
+        myfile << "time px py pz tx ty tz nx ny nz distance nx_fixed ny_fixed nz_fixed U_0" << endl;
         for (unsigned int i=0; i<length; i++) {
             if (!flagCalcDistance) {
                 distance[i]=-1;
@@ -328,7 +332,8 @@ void IMtrajectory::writeToDisk(string filename){
                    << distance[i] << " "
                    << n_fixed[i][0] << " "
                    << n_fixed[i][1] << " "
-                   << n_fixed[i][2] << endl;
+                   << n_fixed[i][2] << " "
+                   << meltingVelocities[i] << endl;
         }
         myfile.close();
     }
@@ -353,6 +358,8 @@ void IMtrajectory::reinitialize(IMmodel* myIMmodel, unsigned int lengthIn){
     distance[0]=0;
     flagCalcDistance=true;
     
+    meltingVelocities = new double[length];
+    meltingVelocities[0]=0;
     
     p = new double*[length];
     t = new double*[length];
@@ -407,4 +414,5 @@ IMtrajectory::~IMtrajectory(){
     delete [] n_fixed;
     delete [] times;
     delete [] distance;
+    delete [] meltingVelocities;
 }

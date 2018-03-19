@@ -56,56 +56,56 @@ unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes
 }
 
 IMlogfile::IMlogfile(string filename, bool simpleLogfile){
-    this->isValidLogfile=1;
+    isValidLogfile=1;
     unsigned int i;
-    this->filename=filename;
+    filename=filename;
     string line;
-    ifstream myfile (this->filename.c_str());
+    ifstream myfile (filename.c_str());
     if (myfile.is_open())
     {
-        this->numberOfLines=0;
+        numberOfLines=0;
         while ( getline (myfile,line) )
         {
-            this->numberOfLines++;
+            numberOfLines++;
         }
         
-        this->content = new string[this->numberOfLines];
-        this->dataLines = new bool[this->numberOfLines];
+        content = new string[numberOfLines];
+        dataLines = new bool[numberOfLines];
         
         myfile.clear();
         myfile.seekg(0, myfile.beg);
 
-        this->numberOfDataLines=0;
-        for (i=0; i<this->numberOfLines; i++) {
+        numberOfDataLines=0;
+        for (i=0; i<numberOfLines; i++) {
             getline (myfile,line);
-            this->content[i]=line;
-            if(this->content[i][0]=='#' || this->content[i][0]=='\r' || this->content[i][0]=='D'){
-                this->dataLines[i]=false;
+            content[i]=line;
+            if(content[i][0]=='#' || content[i][0]=='\r' || content[i][0]=='D'){
+                dataLines[i]=false;
                 
             }else{
-                this->dataLines[i]=true;
-                this->numberOfDataLines++;
+                dataLines[i]=true;
+                numberOfDataLines++;
 
             }
         }
         
-        if(this->numberOfLines==0){
-            this->isValidLogfile=0;
+        if(numberOfLines==0){
+            isValidLogfile=0;
             return;
         }
         
-        this->heaterStates = new bool*[this->numberOfDataLines];
-        this->timeInSeconds = new unsigned int[this->numberOfDataLines];
-        for(unsigned int k = 0; k < this->numberOfDataLines; k++)
-            this->heaterStates[k] = new bool[24];
+        heaterStates = new bool*[numberOfDataLines];
+        timeInSeconds = new unsigned int[numberOfDataLines];
+        for(unsigned int k = 0; k < numberOfDataLines; k++)
+            heaterStates[k] = new bool[24];
         
         unsigned int k=0;
-        for (i=0; i<this->numberOfLines; i++) {
-            if (this->dataLines[i]) {
-                vector<string> sep = split(this->content[i], ' ');
+        for (i=0; i<numberOfLines; i++) {
+            if (dataLines[i]) {
+                vector<string> sep = split(content[i], ' ');
 
                 if(simpleLogfile){
-                    this->timeInSeconds[k]=atoi( sep[0].c_str() );
+                    timeInSeconds[k]=atoi( sep[0].c_str() );
                     for (unsigned n = 0; n<24; n++) {
                         
                         if(sep[n+1][0]=='0'){
@@ -118,7 +118,7 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
                     vector<string> dateValues=split(sep[0], '.');
                     vector<string> timeValues=split(sep[1], ':');
                     
-                    this->timeInSeconds[k]=dateTimeToSeconds(atoi( dateValues[2].c_str() ),atoi( dateValues[1].c_str() ),atoi( dateValues[0].c_str() ),atoi( timeValues[0].c_str() ),atoi( timeValues[1].c_str() ),atoi( timeValues[2].c_str() ));
+                    timeInSeconds[k]=dateTimeToSeconds(atoi( dateValues[2].c_str() ),atoi( dateValues[1].c_str() ),atoi( dateValues[0].c_str() ),atoi( timeValues[0].c_str() ),atoi( timeValues[1].c_str() ),atoi( timeValues[2].c_str() ));
                 
                     for (unsigned n = 0; n<24; n++) {
 
@@ -136,17 +136,24 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
         myfile.close();
         
         for (int i=numberOfDataLines-1; i>=0; i--) {
-            this->timeInSeconds[i]=this->timeInSeconds[i]-this->timeInSeconds[0];
+            timeInSeconds[i]=timeInSeconds[i]-timeInSeconds[0];
         }
-        this->timeInSeconds[0]=0;
+        timeInSeconds[0]=0;
         
     }
     
     else{
-        this->isValidLogfile=0;
-        cout << "Unable to open the file " << this->filename << endl;
+        isValidLogfile=0;
+        cout << "Unable to open the file " << filename << endl;
     }
 };
 
 IMlogfile::~IMlogfile(){
+    for(unsigned int k = 0; k < numberOfDataLines; k++)
+        delete [] heaterStates[k];
+    delete [] heaterStates;
+    delete [] content;
+    
+    delete [] timeInSeconds;
+    delete [] dataLines;
 }

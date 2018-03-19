@@ -21,6 +21,9 @@ using namespace std;
 class IMtrajectory {
     unsigned int pos;
     
+private:
+    
+    
 public:
     double p_0[3];              // initial position in x-, y- and z-direction
     double t_0[3];              // initial tangent vector
@@ -40,12 +43,13 @@ public:
     double r_cDirection[2];     // last r_cDirection
     double gravity_vector[3];
     
-    IMtrajectory(double* p_0, double* t_0, double* n_0, unsigned int length, double* gravity_vector);
+    IMtrajectory(IMmodel*, unsigned int length);
     void add(double,IMmodel*);
     void writeToDisk(string);   //!< writes the solution to disk
     void reset(void);
-    void reinitialize(double* p_0, double* t_0, double* n_0, unsigned int length, double* gravity_vector);
+    void reinitialize(IMmodel*, unsigned int length);
     void print(void);
+    ~IMtrajectory();
 };
 
 #endif /* IMtrajectory_hpp */

@@ -9,7 +9,7 @@
 #include "runTests.hpp"
 
 bool isNearlyEqual(double a, double b){
-    return (fabs( a - b ) < 1e-5);
+    return (fabs( a - b ) < 1e-4);
 }
 
 int testerInfo(int condition,string moduleName,int testNumber){
@@ -82,21 +82,21 @@ int runTests(string testName,int testNumber){
             {
                 bool testHeaterStates[24]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0};
                 mMode=IMinterpreter(testHeaterStates, &P_H, &P_W);
-                flag_notPassed=!(mMode==0 && (isNearlyEqual( P_W, 0.0) && isNearlyEqual( P_H, 2880.0)));
+                flag_notPassed=!(mMode==0 && isNearlyEqual( P_W, 0.0) && isNearlyEqual( P_H, 2880.0));
                 break;
             }
             case 3:
             {
                 bool testHeaterStates[24]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1};
                 mMode=IMinterpreter(testHeaterStates, &P_H, &P_W);
-                flag_notPassed=!(mMode==-1 && (isNearlyEqual( P_H, 0.0) && isNearlyEqual( P_W, 0.0)));
+                flag_notPassed=!(mMode==-1 && isNearlyEqual( P_H, 0.0) && isNearlyEqual( P_W, 0.0));
                 break;
             }
             case 4:
             {
                 bool testHeaterStates[24]={1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
                 mMode=IMinterpreter(testHeaterStates, &P_H, &P_W);
-                flag_notPassed=!(mMode==0 && (isNearlyEqual( P_H, 1440.0) && isNearlyEqual( P_W, 0.0)));
+                flag_notPassed=!(mMode==0 && isNearlyEqual( P_H, 1440.0) && isNearlyEqual( P_W, 0.0));
                 break;
             }
             case 5:

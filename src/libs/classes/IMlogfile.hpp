@@ -35,9 +35,10 @@ public:
     bool *dataLines;                // true for lines with valid data
     unsigned int numberOfDataLines; // number of lines with valid data
     bool **heaterStates;            // 2d array of the heater states (numberOfDataLines x 24)
-    unsigned int *timeInSeconds;    // time in seconds for each data line (beginning from 0 s)
+    double *timeInSeconds;          // time in seconds for each data line (beginning from 0 s)
     bool isValidLogfile;            // to check if the logfile is valid
     IMlogfile(string,bool);
+    void extendLogfile(unsigned int);
     ~IMlogfile();
 };
 

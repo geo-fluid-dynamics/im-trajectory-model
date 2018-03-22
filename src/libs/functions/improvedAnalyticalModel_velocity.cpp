@@ -11,9 +11,15 @@
 double improvedAnalyticalModel_velocity(double F_H,float P_H,double rho_S,double rho_L,double c_p_S,double c_p_L,double mu_L,double k_L,double R,double h_m,double T_m,double T_S,double U_0_min,double U_0_max,double error){
     // uses secant search to find the root of f_velo
     
-    double a,b,c,e,gammaWithoutVelocity,P_CWithoutVelocity;
+    double a,b,c,gammaWithoutVelocity,P_CWithoutVelocity;
     
     double alpha_L=k_L/rho_L/c_p_L;
+    
+    // check if force is greater than zero. Otherwise, the velocity cannot be calculated
+    if (F_H<=0) {
+        cout << "Error: Force must be always greater than zero!" << endl;
+        exit(0);
+    }
     
     gammaWithoutVelocity=pow(rho_S*R/rho_L,4./3.)*pow(3*M_PI*mu_L/2.0/F_H, 1./3.)/20.0/alpha_L;
     P_CWithoutVelocity=M_PI*R*R*rho_S*(h_m+c_p_S*(T_m-T_S));
@@ -21,7 +27,6 @@ double improvedAnalyticalModel_velocity(double F_H,float P_H,double rho_S,double
     b=U_0_min;
     c=U_0_max;
 
-    e=error;
     do
     {
         a=b;
@@ -33,7 +38,7 @@ double improvedAnalyticalModel_velocity(double F_H,float P_H,double rho_S,double
         {
             return c;
         }
-    }while(abs(c-b)>=e);    //check if the error is greater than the desired accuracy
+    }while(abs(c-b)>=error);    //check if the error is greater than the desired accuracy
     
     return c;
 }

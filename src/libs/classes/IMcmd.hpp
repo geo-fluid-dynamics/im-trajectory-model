@@ -23,6 +23,8 @@ public:
     string inputFileName;
     bool simpleLogfile;
     bool flagCalcDistance;
+    bool extendLogfile;
+    unsigned int extendSubsteps;
     IMcmd(int argc, const char *argv[]);
 };
 

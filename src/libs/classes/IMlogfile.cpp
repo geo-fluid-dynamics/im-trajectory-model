@@ -8,8 +8,8 @@
 
 #include "IMlogfile.hpp"
 
-unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes,int seconds){
-    unsigned int secondsOut=hours*3600+minutes*60+seconds;
+double dateTimeToSeconds(int year,int month, int day,int hours,int minutes,int seconds){
+    double secondsOut=hours*3600+minutes*60+seconds;
     secondsOut=secondsOut+365*(year-2008)*3600*24;
     for(unsigned int i=1;i<=month;i++){
         switch (i) {
@@ -55,10 +55,10 @@ unsigned int dateTimeToSeconds(int year,int month, int day,int hours,int minutes
     return secondsOut;
 }
 
-IMlogfile::IMlogfile(string filename, bool simpleLogfile){
+IMlogfile::IMlogfile(string filenameIn, bool simpleLogfile){
     isValidLogfile=1;
     unsigned int i;
-    filename=filename;
+    filename=filenameIn;
     string line;
     ifstream myfile (filename.c_str());
     if (myfile.is_open())
@@ -95,7 +95,7 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
         }
         
         heaterStates = new bool*[numberOfDataLines];
-        timeInSeconds = new unsigned int[numberOfDataLines];
+        timeInSeconds = new double[numberOfDataLines];
         for(unsigned int k = 0; k < numberOfDataLines; k++)
             heaterStates[k] = new bool[24];
         
@@ -105,7 +105,7 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
                 vector<string> sep = split(content[i], ' ');
 
                 if(simpleLogfile){
-                    timeInSeconds[k]=atoi( sep[0].c_str() );
+                    timeInSeconds[k]=atof( sep[0].c_str() );
                     for (unsigned n = 0; n<24; n++) {
                         
                         if(sep[n+1][0]=='0'){
@@ -151,9 +151,31 @@ IMlogfile::IMlogfile(string filename, bool simpleLogfile){
 IMlogfile::~IMlogfile(){
     for(unsigned int k = 0; k < numberOfDataLines; k++)
         delete [] heaterStates[k];
-    delete [] heaterStates;
-    delete [] content;
+        delete [] heaterStates;
+        delete [] content;
+        delete [] timeInSeconds;
+        delete [] dataLines;
+}
+
+void IMlogfile::extendLogfile(unsigned int extendValue){
+    string extendedLogfilename=filename;
+    extendedLogfilename.replace(extendedLogfilename.end()-4,extendedLogfilename.end(),"_ext.csv");
     
-    delete [] timeInSeconds;
-    delete [] dataLines;
+    ofstream myfile (extendedLogfilename.c_str());
+    if (myfile.is_open())
+    {
+        myfile << content[0] << endl;
+        for (unsigned int i=1; i<numberOfLines-1; i++) {
+            for (unsigned int k=0; k<extendValue; k++) {
+                myfile << fixed << timeInSeconds[i-1]+k*(timeInSeconds[i]-timeInSeconds[i-1])/extendValue;
+                for (unsigned int kk=0; kk<24; kk++) {
+                    myfile << " " << heaterStates[i-1][kk];
+                }
+                myfile << endl;
+            }
+        }
+        myfile << content[numberOfLines-1];
+        myfile.close();
+    }
+    else cout << "Unable to open file";
 }

@@ -43,7 +43,11 @@ or for a simplified logfile that contains less information (see `test/` for exam
 in which `LOGFILE` is the location of the logfile that contains the heater states, `INPUTFILE` the location of the input file (e.g. inputs.ini) and `OUTPUTFILE` is the location where to save the melting trajectory.
 
 ## Examples
+### turnright
 ![turnrightExample](doc/github/turnrightExample.png)
+
+### driveU
+![driveUExample](doc/github/driveUExample.png)
 
 ## Models
 The models can be selected in the input file. Currently, there is only one model for curvilinear melting.

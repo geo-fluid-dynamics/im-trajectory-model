@@ -15,6 +15,7 @@ static void show_usage(void){
     << "\t-h,--help\t\tShow this help message\n"
     << "\t-l,--logfile\t\tSpecify the logile name\n"
     << "\t-sl,--simplelogfile\tSpecify the simple logile name\n"
+    << "\t-el,--extendlogfile\tExtends the logfile by introducing substeps\n"
     << "\t-i,--input\t\tSpecify the input file name (*.ini)\n"
     << "\t-d,--distance\t\tDecide if the total distance should be calculated (0: no, 1: yes)\n"
     << "\t-t,--test\t\tRun tests\n"
@@ -34,6 +35,8 @@ IMcmd::IMcmd(int argc, const char *argv[]){
     outputName="trajectory.log";
     inputFileName="";
     simpleLogfile=false;
+    extendLogfile=false;
+    extendSubsteps=0;
     flagCalcDistance=true;
     
     if (argc > 0) {
@@ -63,6 +66,16 @@ IMcmd::IMcmd(int argc, const char *argv[]){
                     simpleLogfile=true;
                 } else { // there was no argument to the destination option.
                     std::cerr << "--simplelogfile option requires one argument." << std::endl;
+                    flag_returnValue=1;
+                    flag_return=1;
+                }
+            } else if ((arg == "-el") || (arg == "--extendlogfile")) {
+                
+                if (i + 1 < argc) { // Make sure we aren't at the end of argv!
+                    extendSubsteps = atoi(argv[++i]); // Increment 'i' so we don't get the argument as the next argv[i].
+                    extendLogfile=true;
+                } else { // there was no argument to the destination option.
+                    std::cerr << "--extendlogfile option requires one argument." << std::endl;
                     flag_returnValue=1;
                     flag_return=1;
                 }

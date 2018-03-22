@@ -37,6 +37,17 @@ int main(int argc, const char * argv[]) {
             return 1;
         }
         
+        // if the logfile should just be extended
+        if (myIMcmd.extendLogfile) {
+            if (myIMcmd.simpleLogfile) {
+                myIMlogfile.extendLogfile(myIMcmd.extendSubsteps);
+            }else{
+                cout << "Extension of the logfile is only possible for simplified logfiles." << endl;
+                return 1;
+            }
+            return 0;
+        }
+        
         IMmodel myIMmodel;
         
         if (!myIMcmd.inputFileName.empty()) {

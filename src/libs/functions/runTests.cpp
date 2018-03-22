@@ -8,8 +8,8 @@
 
 #include "runTests.hpp"
 
-float isNearlyEqual(double a, double b){
-    return fabs( a - b ) < 1e-4;
+bool isNearlyEqual(double a, double b){
+    return fabs( a - b ) < 1e-6;
 }
 
 int testerInfo(int condition,string moduleName,int testNumber){

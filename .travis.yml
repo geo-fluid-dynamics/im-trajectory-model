@@ -11,7 +11,7 @@ before_script:
 
 script:
     - make -j
-    - make test -j
+    - make test
 
 branches:
     only:

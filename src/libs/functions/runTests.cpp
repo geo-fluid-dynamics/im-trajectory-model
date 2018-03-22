@@ -36,7 +36,7 @@ int testLogfileReading(string filename){
 int runTests(string testName,int testNumber){
     
     bool flag_notPassed=0;
-    float P_H, P_W;
+    double P_H, P_W;
     int mMode;
     
     if (testName=="IMLogfile") {

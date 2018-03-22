@@ -18,8 +18,8 @@
 
 int main(int argc, const char * argv[]) {
     
-    float P_H=0.;
-    float P_W=0.;
+    double P_H=0.;
+    double P_W=0.;
     
     // Check the command line arguments
     IMcmd myIMcmd(argc, argv);

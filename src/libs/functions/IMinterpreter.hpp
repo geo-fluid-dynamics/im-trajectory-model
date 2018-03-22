@@ -13,6 +13,6 @@
 #include <cmath>
 using namespace std;
 
-int IMinterpreter(bool* heaterStates,float *P_H,float *P_W);
+int IMinterpreter(bool* heaterStates,double *P_H,double *P_W);
 
 #endif /* IMinterpreter_hpp */

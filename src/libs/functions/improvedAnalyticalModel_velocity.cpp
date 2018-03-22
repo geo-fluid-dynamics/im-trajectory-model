@@ -18,7 +18,7 @@ double improvedAnalyticalModel_velocity(double F_H,float P_H,double rho_S,double
     // check if force is greater than zero. Otherwise, the velocity cannot be calculated
     if (F_H<=0) {
         cout << "Error: Force must be always greater than zero!" << endl;
-        exit(0);
+        exit (EXIT_FAILURE);
     }
     
     gammaWithoutVelocity=pow(rho_S*R/rho_L,4./3.)*pow(3*M_PI*mu_L/2.0/F_H, 1./3.)/20.0/alpha_L;

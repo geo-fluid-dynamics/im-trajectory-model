@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+#include <stdlib.h>
 
 double improvedAnalyticalModel_velocity(double,float,double,double,double,double,double,double,double,double,double,double,double,double,double);
 double f_velo(double,float,double,double);

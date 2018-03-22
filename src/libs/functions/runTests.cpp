@@ -9,7 +9,7 @@
 #include "runTests.hpp"
 
 bool isNearlyEqual(double a, double b){
-    return fabs( a - b ) < 1e-6;
+    return (fabs( a - b ) < 1e-5);
 }
 
 int testerInfo(int condition,string moduleName,int testNumber){

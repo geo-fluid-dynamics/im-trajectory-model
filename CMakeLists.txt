@@ -32,13 +32,13 @@ foreach(number 1)
   add_test(NAME improvedAnalyticalModel${number} COMMAND IMTrajectoryModel -t improvedAnalyticalModel ${number})
 endforeach()
 
-if (LINUX)
-    find_program (BASH_PROGRAM shell)
-endif (LINUX)
-
 if (APPLE)
 	find_program (BASH_PROGRAM bash)
 endif (APPLE)
+
+IF(UNIX AND NOT APPLE)
+    find_program (BASH_PROGRAM shell)
+endif (UNIX AND NOT APPLE)
 
 if (BASH_PROGRAM)
 	add_test(turnright_test ${BASH_PROGRAM} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/examples/turnright/run.sh)

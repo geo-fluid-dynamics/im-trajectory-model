@@ -32,9 +32,9 @@ foreach(number 1)
   add_test(NAME improvedAnalyticalModel${number} COMMAND IMTrajectoryModel -t improvedAnalyticalModel ${number})
 endforeach()
 
-if (UNIX)
+if (LINUX)
     find_program (BASH_PROGRAM shell)
-endif (UNIX)
+endif (LINUX)
 
 if (APPLE)
 	find_program (BASH_PROGRAM bash)
